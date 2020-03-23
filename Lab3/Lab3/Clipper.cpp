@@ -11,6 +11,7 @@
 #include "Vertex.h"
 #include "Clipper.h"
 #include <iostream>
+#include <float.h>
 
 ///
 // Simple module that performs clipping
@@ -42,15 +43,46 @@ Vertex intersection_point(Vertex v1, Vertex v2, Vertex v3, Vertex v4)
 
     Vertex intersection;
 
-    int num = (v1.x * v2.y - v1.y * v2.x) * (v3.x - v4.x) -
-        (v1.x - v2.x) * (v3.x * v4.y - v3.y * v4.x);
-    int den = (v1.x - v2.x) * (v3.y - v4.y) - (v1.y - v2.y) * (v3.x - v4.x);
-    intersection.x = num / den;
+    //int num = (v1.x * v2.y - v1.y * v2.x) * (v3.x - v4.x) -
+    //    (v1.x - v2.x) * (v3.x * v4.y - v3.y * v4.x);
+    //float den = (v1.x - v2.x) * (v3.y - v4.y) - (v1.y - v2.y) * (v3.x - v4.x);
+    //
+    //if (den == 0) {
+    //    den = 0.00001;
+    //}
+    //intersection.x = num / den;
 
-    num = (v1.x * v2.y - v1.y * v2.x) * (v3.y - v4.y) -
-        (v1.y - v2.y) * (v3.x * v4.y - v3.y * v4.x);
-    den = (v1.x - v2.x) * (v3.y - v4.y) - (v1.y - v2.y) * (v3.x - v4.x);
-    intersection.y = num / den;
+    //num = (v1.x * v2.y - v1.y * v2.x) * (v3.y - v4.y) -
+    //    (v1.y - v2.y) * (v3.x * v4.y - v3.y * v4.x);
+    //den = (v1.x - v2.x) * (v3.y - v4.y) - (v1.y - v2.y) * (v3.x - v4.x);
+    //intersection.y = num / den;
+
+    double a1 = v2.y - v1.y;
+    double b1 = v1.x - v2.x;
+    double c1 = a1 * (v1.x) + b1 * (v1.y);
+
+    // Line CD represented as a2x + b2y = c2 
+    double a2 = v4.y - v3.y;
+    double b2 = v3.x - v4.x;
+    double c2 = a2 * (v3.x) + b2 * (v3.y);
+
+    double determinant = a1 * b2 - a2 * b1;
+
+    if (determinant == 0)
+    {
+        // The lines are parallel. This is simplified 
+        // by returning a pair of FLT_MAX 
+        
+        intersection.x = DBL_MAX;
+        intersection.y = DBL_MAX;
+    }
+    else
+    {
+        double x = (b2 * c1 - b1 * c2) / determinant;
+        double y = (a1 * c2 - a2 * c1) / determinant;
+        intersection.x = x;
+        intersection.y = y;
+    }
 
     return intersection;
 }
@@ -76,8 +108,11 @@ void clipVertices(int in, const Vertex *inV, Vertex *outV, Vertex v1, Vertex v2)
 
     for (int i = 0; i < in; i++)
     {
-        int j = (i + 1) % 4;
+        int j = (i + 1) % in;
 
+        std::cout << "\n \t" << i << " , " << j << std::endl;
+
+        
         std::cout << "Clipping line: (" << inV[i].x << "," << inV[i].y << ")" <<
                                  "-> (" << inV[j].x << "," << inV[j].y << ")" << std::endl;
 
@@ -93,6 +128,7 @@ void clipVertices(int in, const Vertex *inV, Vertex *outV, Vertex v1, Vertex v2)
         // Case 1 : both points are inside 
         if (i_position < 0 && j_position < 0)
         {
+            std::cout << "\t Both points inside";
             //Add first point 
             outV[outVertices] = inV[j];
             outVertices++;
@@ -101,6 +137,7 @@ void clipVertices(int in, const Vertex *inV, Vertex *outV, Vertex v1, Vertex v2)
         // Case 2: only first point is outside 
         else if (i_position >= 0 && j_position < 0)
         {
+            std::cout << "\t First point outside";
             // Add point of intersection with current edge           
             outV[outVertices] = intersection_point(inV[i], inV[j], v1, v2);
             outVertices++;
@@ -112,6 +149,7 @@ void clipVertices(int in, const Vertex *inV, Vertex *outV, Vertex v1, Vertex v2)
         // Case 3: When only second point is outside 
         else if (i_position < 0 && j_position >= 0)
         {
+            std::cout << "\t Second point outside";
             // Add point of intersection with current edge           
             outV[outVertices] = intersection_point(inV[i], inV[j], v1, v2);
             outVertices++;
@@ -120,8 +158,10 @@ void clipVertices(int in, const Vertex *inV, Vertex *outV, Vertex v1, Vertex v2)
         // Case 4: When both points are outside 
         else
         {
+            std::cout << "\t Both points outside";
             // None of the points are added 
         }
+        
     }
 }
 
@@ -143,10 +183,11 @@ void clipVertices(int in, const Vertex *inV, Vertex *outV, Vertex v1, Vertex v2)
 ///
 void sutherlandHodgmanAlgo(int in, const Vertex *inV, Vertex *outV, Vertex *clipWindowVertices)
 {
-    int outNum=0;
     for ( int i = 0; i < 4; i++)
     { 
         int j = (i + 1) % 4;
+        
+        std::cout << i <<" , " << j << std::endl;
 
         clipVertices(in, inV, outV, clipWindowVertices[i], clipWindowVertices[j]);
 
@@ -199,6 +240,6 @@ int Clipper::clipPolygon( int in, const Vertex inV[], Vertex outV[],
     sutherlandHodgmanAlgo(in, inV, outV, clipWindowVertices);
 
 
-    return outNum;  // remember to return the outgoing vertex count!
+    return outVertices;  // remember to return the outgoing vertex count!
 
 }
