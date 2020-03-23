@@ -1,0 +1,8 @@
+﻿  Clipper.cpp
+C:\Users\hp\Desktop\OpenGLProjects\Lab3\Lab3\Clipper.cpp(43,13): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\hp\Desktop\OpenGLProjects\Lab3\Lab3\Clipper.cpp(45,13): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\hp\Desktop\OpenGLProjects\Lab3\Lab3\Clipper.cpp(46,26): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\hp\Desktop\OpenGLProjects\Lab3\Lab3\Clipper.cpp(48,55): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\hp\Desktop\OpenGLProjects\Lab3\Lab3\Clipper.cpp(50,41): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\hp\Desktop\OpenGLProjects\Lab3\Lab3\Clipper.cpp(51,26): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  Lab3.vcxproj -> C:\Users\hp\Desktop\OpenGLProjects\Lab3\Debug\Lab3.exe
