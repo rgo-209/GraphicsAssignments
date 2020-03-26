@@ -196,7 +196,7 @@ void makePolygons( Canvas &C ) {
     Vertex tmp[50];
     int wl;
 
-    /*
+
 
     ///
     // first polygon:  entirely within region
@@ -282,7 +282,7 @@ void makePolygons( Canvas &C ) {
         drawPolygon( tmp, wl, C );
         nv[6] = wl;
     }
-    */
+
     ///
     // eighth polygon:  outside on all four edges
     ///

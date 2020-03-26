@@ -26,6 +26,24 @@ Clipper::Clipper() {
 static int outVertices=0;
 
 ///
+// inside
+//
+// Checks if the point is to the left of the clip edge.
+//
+// @param v1    the first vertex
+// @param v2    the second vertex
+// @param v     the vertex to check for
+//
+// @return true if vertex is on left
+//
+///
+bool inside(Vertex v, Vertex v1, Vertex v2)
+{
+    return (v2.y - v1.y) * v.x + (v1.x - v2.x) * v.y + (v2.x * v1.y - v1.x * v2.y) < 0;
+}
+
+
+///
 // intersection_point
 //
 // Find the intersection point of 2 lines
@@ -57,14 +75,14 @@ Vertex intersection_point(Vertex v1, Vertex v2, Vertex v3, Vertex v4)
     //den = (v1.x - v2.x) * (v3.y - v4.y) - (v1.y - v2.y) * (v3.x - v4.x);
     //intersection.y = num / den;
 
-    double a1 = v2.y - v1.y;
-    double b1 = v1.x - v2.x;
-    double c1 = a1 * (v1.x) + b1 * (v1.y);
+    double a1 = double(v2.y) - double(v1.y);
+    double b1 = double(v1.x) - double(v2.x);
+    double c1 = a1 * (double(v1.x)) + b1 * (double(v1.y));
 
     // Line CD represented as a2x + b2y = c2 
-    double a2 = v4.y - v3.y;
-    double b2 = v3.x - v4.x;
-    double c2 = a2 * (v3.x) + b2 * (v3.y);
+    double a2 = double(v4.y) - double(v3.y);
+    double b2 = double(v3.x) - double(v4.x);
+    double c2 = a2 * (double(v3.x)) + b2 * (double(v3.y));
 
     double determinant = a1 * b2 - a2 * b1;
 
@@ -80,8 +98,8 @@ Vertex intersection_point(Vertex v1, Vertex v2, Vertex v3, Vertex v4)
     {
         double x = (b2 * c1 - b1 * c2) / determinant;
         double y = (a1 * c2 - a2 * c1) / determinant;
-        intersection.x = x;
-        intersection.y = y;
+        intersection.x = int(x);
+        intersection.y = int(y);
     }
 
     return intersection;
@@ -118,45 +136,43 @@ void clipVertices(int in, const Vertex *inV, Vertex *outV, Vertex v1, Vertex v2)
 
         Vertex intersectionPoint = intersection_point( inV[i], inV[j], v1, v2 );
 
-        int i_position, j_position;
+        //int i_position, j_position;
+        bool i_position, j_position;
+        i_position = inside(inV[i], v1, v2);
+        j_position = inside(inV[j], v1, v2);
+        //i_position = (v2.x - v1.x) * (inV[i].y - v1.y) - (v2.y - v1.y) * (inV[i].x - v1.x);
 
-        i_position = (v2.x - v1.x) * (inV[i].y - v1.y) - (v2.y - v1.y) * (inV[i].x - v1.x);
-
-        j_position = (v2.x - v1.x) * (inV[j].y - v1.y) - (v2.y - v1.y) * (inV[j].x - v1.x);
+        //j_position = (v2.x - v1.x) * (inV[j].y - v1.y) - (v2.y - v1.y) * (inV[j].x - v1.x);
         
 
         // Case 1 : both points are inside 
-        if (i_position < 0 && j_position < 0)
+        if (i_position && j_position )
         {
             std::cout << "\t Both points inside";
             //Add first point 
-            outV[outVertices] = inV[j];
-            outVertices++;
+            outV[outVertices++] = inV[j];
         }
 
         // Case 2: only first point is outside 
-        else if (i_position >= 0 && j_position < 0)
+        else if (!i_position && j_position)
         {
             std::cout << "\t First point outside";
             // Add point of intersection with current edge           
-            outV[outVertices] = intersection_point(inV[i], inV[j], v1, v2);
-            outVertices++;
+            outV[outVertices++] = intersection_point(inV[i], inV[j], v1, v2);
             // Add second point
-            outV[outVertices] = inV[j];
-            outVertices++;
+            outV[outVertices++] = inV[j];
         }
 
         // Case 3: When only second point is outside 
-        else if (i_position < 0 && j_position >= 0)
+        else if (i_position && !j_position)
         {
             std::cout << "\t Second point outside";
             // Add point of intersection with current edge           
-            outV[outVertices] = intersection_point(inV[i], inV[j], v1, v2);
-            outVertices++;
+            outV[outVertices++] = intersection_point(inV[i], inV[j], v1, v2);
         }
 
         // Case 4: When both points are outside 
-        else
+        if(!i_position && !j_position)
         {
             std::cout << "\t Both points outside";
             // None of the points are added 
@@ -186,8 +202,12 @@ void sutherlandHodgmanAlgo(int in, const Vertex *inV, Vertex *outV, Vertex *clip
     for ( int i = 0; i < 4; i++)
     { 
         int j = (i + 1) % 4;
-        
-        std::cout << i <<" , " << j << std::endl;
+        std::cout << std::endl << "Clipping w.r.t. (";
+        std::cout << clipWindowVertices[i].x << " , " << clipWindowVertices[i].y << ") -> (";
+        std::cout << clipWindowVertices[j].x << " , " << clipWindowVertices[j].y << ")"
+            << std::endl;
+
+        std::cout << std::endl << std::endl << i <<" , " << j << std::endl;
 
         clipVertices(in, inV, outV, clipWindowVertices[i], clipWindowVertices[j]);
 
@@ -231,14 +251,16 @@ int Clipper::clipPolygon( int in, const Vertex inV[], Vertex outV[],
     clipWindowVertices[3].x = ll.x;
     clipWindowVertices[3].y = ur.y;
 
+    std::cout << std::endl << std::endl << "New Figure: \n";
     std::cout << "Clip edge 1: (" << clipWindowVertices[0].x << " , " << clipWindowVertices[0].y << ")" << std::endl;
     std::cout << "Clip edge 2: (" << clipWindowVertices[1].x << " , " << clipWindowVertices[1].y << ")" << std::endl;
     std::cout << "Clip edge 3: (" << clipWindowVertices[2].x << " , " << clipWindowVertices[2].y << ")" << std::endl;
     std::cout << "Clip edge 4: (" << clipWindowVertices[3].x << " , " << clipWindowVertices[3].y << ")" << std::endl;
     
-
+    outVertices = 0;
     sutherlandHodgmanAlgo(in, inV, outV, clipWindowVertices);
 
+    std::cout << std::endl << std::endl << "Done figure..!! ";
 
     return outVertices;  // remember to return the outgoing vertex count!
 
