@@ -5,7 +5,7 @@
 //  Based on a version created by Joe Geigel on 11/30/11.
 //  Copyright 2011 Rochester Institute of Technology. All rights reserved.
 //
-//  Contributor:  YOUR_NAME_HERE
+//  Contributor:  Rahul Golhar
 //
 
 #ifndef _CLIPPER_H_
@@ -45,8 +45,8 @@ public:
     // @return number of vertices in the polygon resulting after clipping
     //
     ///
-    int clipPolygon( int in, const Vertex inV[], Vertex outV[],
-		     Vertex ll, Vertex ur );
+    int clipPolygon(int in, const Vertex inV[], Vertex outV[],
+        Vertex ll, Vertex ur);
 
 };
 

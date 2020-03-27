@@ -5,7 +5,7 @@
 //  Based on a version created by Joe Geigel on 11/30/11.
 //  Copyright 2014 Rochester Institute of Technology. All rights reserved.
 //
-//  Contributor:  YOUR_NAME_HERE
+//  Contributor:  Rahul Golhar
 //
 
 #include "Vertex.h"
@@ -23,92 +23,48 @@
 Clipper::Clipper() {
 }
 
-static int outVertices=0;
-
 ///
 // inside
 //
-// Checks if the point is to the left of the clip edge.
+// Checks if the vertex is inside the polygon.
 //
 // @param v1    the first vertex
 // @param v2    the second vertex
 // @param v     the vertex to check for
 //
-// @return true if vertex is on left
+// @return true if vertex is inside the polygon
 //
 ///
-bool inside(Vertex v, Vertex v1, Vertex v2)
+bool inside(Vertex v, Vertex v1, Vertex v2, int side)
 {
-    return (v2.y - v1.y) * v.x + (v1.x - v2.x) * v.y + (v2.x * v1.y - v1.x * v2.y) < 0;
-}
-
-
-///
-// intersection_point
-//
-// Find the intersection point of 2 lines
-//
-// @param v1    the first vertex
-// @param v2    the second vertex
-// @param v3    the third vertex
-// @param v4    the fourth vertex
-//
-// @return intersection point of the lines
-//
-///
-Vertex intersection_point(Vertex v1, Vertex v2, Vertex v3, Vertex v4)
-{
-
-    Vertex intersection;
-
-    //int num = (v1.x * v2.y - v1.y * v2.x) * (v3.x - v4.x) -
-    //    (v1.x - v2.x) * (v3.x * v4.y - v3.y * v4.x);
-    //float den = (v1.x - v2.x) * (v3.y - v4.y) - (v1.y - v2.y) * (v3.x - v4.x);
-    //
-    //if (den == 0) {
-    //    den = 0.00001;
-    //}
-    //intersection.x = num / den;
-
-    //num = (v1.x * v2.y - v1.y * v2.x) * (v3.y - v4.y) -
-    //    (v1.y - v2.y) * (v3.x * v4.y - v3.y * v4.x);
-    //den = (v1.x - v2.x) * (v3.y - v4.y) - (v1.y - v2.y) * (v3.x - v4.x);
-    //intersection.y = num / den;
-
-    double a1 = double(v2.y) - double(v1.y);
-    double b1 = double(v1.x) - double(v2.x);
-    double c1 = a1 * (double(v1.x)) + b1 * (double(v1.y));
-
-    // Line CD represented as a2x + b2y = c2 
-    double a2 = double(v4.y) - double(v3.y);
-    double b2 = double(v3.x) - double(v4.x);
-    double c2 = a2 * (double(v3.x)) + b2 * (double(v3.y));
-
-    double determinant = a1 * b2 - a2 * b1;
-
-    if (determinant == 0)
+    if (side == 1 && v1.y < v.y)
     {
-        // The lines are parallel. This is simplified 
-        // by returning a pair of FLT_MAX 
-        
-        intersection.x = DBL_MAX;
-        intersection.y = DBL_MAX;
+        // Bottom
+        return true;
+    }
+    else if (side == 2 && v2.x > v.x)
+    {
+        // Right
+        return true;
+    }
+    else if (side == 3 && v1.y > v.y)
+    {
+        // Top
+        return true;
+    }
+    else if (side == 4 && v2.x < v.x)
+    {
+        // Left
+        return true;
     }
     else
     {
-        double x = (b2 * c1 - b1 * c2) / determinant;
-        double y = (a1 * c2 - a2 * c1) / determinant;
-        intersection.x = int(x);
-        intersection.y = int(y);
+        return false;
     }
-
-    return intersection;
 }
 
-
-
 ///
-// clipVertices
+// sutherlandHodgmanAlgo
 //
 // Clip vertices w.r.t. the current edge being selected.
 // 
@@ -121,99 +77,57 @@ Vertex intersection_point(Vertex v1, Vertex v2, Vertex v3, Vertex v4)
 // @return intersection point of the lines
 //
 ///
-void clipVertices(int in, const Vertex *inV, Vertex *outV, Vertex v1, Vertex v2)
+int sutherlandHodgmanAlgo(int in, const Vertex *inVertices, Vertex *outVertices, Vertex v1, Vertex v2, int side)
 {
+    int outGoingCount = 0;
+
+    Vertex second_vertex = inVertices[in - 1];
 
     for (int i = 0; i < in; i++)
     {
-        int j = (i + 1) % in;
+        Vertex first_vertex = inVertices[i];
 
-        std::cout << "\n \t" << i << " , " << j << std::endl;
+        //If first point is inside
+        if (inside(first_vertex, v1, v2, side)) {
+            //If second point is inside
+            if (inside(second_vertex, v1, v2, side)) {
+                outVertices[outGoingCount] = first_vertex;
+                outGoingCount++;
+            }
+            else {
 
-        
-        std::cout << "Clipping line: (" << inV[i].x << "," << inV[i].y << ")" <<
-                                 "-> (" << inV[j].x << "," << inV[j].y << ")" << std::endl;
-
-        Vertex intersectionPoint = intersection_point( inV[i], inV[j], v1, v2 );
-
-        //int i_position, j_position;
-        bool i_position, j_position;
-        i_position = inside(inV[i], v1, v2);
-        j_position = inside(inV[j], v1, v2);
-        //i_position = (v2.x - v1.x) * (inV[i].y - v1.y) - (v2.y - v1.y) * (inV[i].x - v1.x);
-
-        //j_position = (v2.x - v1.x) * (inV[j].y - v1.y) - (v2.y - v1.y) * (inV[j].x - v1.x);
-        
-
-        // Case 1 : both points are inside 
-        if (i_position && j_position )
-        {
-            std::cout << "\t Both points inside";
-            //Add first point 
-            outV[outVertices++] = inV[j];
+                //If second point is outside
+                if (v1.x == v2.x) {
+                    outVertices[outGoingCount].x = v1.x;
+                    outVertices[outGoingCount].y = first_vertex.y + (v1.x - first_vertex.x) * (second_vertex.y - first_vertex.y) / (second_vertex.x - first_vertex.x);
+                }
+                else {
+                    outVertices[outGoingCount].x = first_vertex.x + (v1.y - first_vertex.y) * (second_vertex.x - first_vertex.x) / (second_vertex.y - first_vertex.y);
+                    outVertices[outGoingCount].y = v1.y;
+                }
+                outGoingCount++;
+                outVertices[outGoingCount] = first_vertex;
+                outGoingCount++;
+            }
         }
-
-        // Case 2: only first point is outside 
-        else if (!i_position && j_position)
-        {
-            std::cout << "\t First point outside";
-            // Add point of intersection with current edge           
-            outV[outVertices++] = intersection_point(inV[i], inV[j], v1, v2);
-            // Add second point
-            outV[outVertices++] = inV[j];
+        else {
+            // If first point is outside, but second is inside
+            if (inside(second_vertex, v1, v2, side)) {
+                if (v1.x == v2.x) {
+                    outVertices[outGoingCount].x = v1.x;
+                    outVertices[outGoingCount].y = first_vertex.y + (v1.x - first_vertex.x) * (second_vertex.y - first_vertex.y) / (second_vertex.x - first_vertex.x);
+                }
+                else {
+                    outVertices[outGoingCount].x = first_vertex.x + (v1.y - first_vertex.y) * (second_vertex.x - first_vertex.x) / (second_vertex.y - first_vertex.y);
+                    outVertices[outGoingCount].y = v1.y;
+                }
+                outGoingCount++;
+            }
         }
-
-        // Case 3: When only second point is outside 
-        else if (i_position && !j_position)
-        {
-            std::cout << "\t Second point outside";
-            // Add point of intersection with current edge           
-            outV[outVertices++] = intersection_point(inV[i], inV[j], v1, v2);
-        }
-
-        // Case 4: When both points are outside 
-        if(!i_position && !j_position)
-        {
-            std::cout << "\t Both points outside";
-            // None of the points are added 
-        }
-        
+        second_vertex = first_vertex;
     }
+    return outGoingCount;
 }
-
-
-
-
-///
-// sutherlandHodgmanAlgo
-//
-// Clip windows according to each and every vertex
-//
-
-// @param in                    the number of vertices in the polygon to be clipped
-// @param inV                   the incoming vertex list
-// @param outV                  the outgoing vertex list
-// @param clipWindowVertices    the clip window vertices list
-//
-//
-///
-void sutherlandHodgmanAlgo(int in, const Vertex *inV, Vertex *outV, Vertex *clipWindowVertices)
-{
-    for ( int i = 0; i < 4; i++)
-    { 
-        int j = (i + 1) % 4;
-        std::cout << std::endl << "Clipping w.r.t. (";
-        std::cout << clipWindowVertices[i].x << " , " << clipWindowVertices[i].y << ") -> (";
-        std::cout << clipWindowVertices[j].x << " , " << clipWindowVertices[j].y << ")"
-            << std::endl;
-
-        std::cout << std::endl << std::endl << i <<" , " << j << std::endl;
-
-        clipVertices(in, inV, outV, clipWindowVertices[i], clipWindowVertices[j]);
-
-    }
-}
-
 
 ///
 // clipPolygon
@@ -235,32 +149,47 @@ void sutherlandHodgmanAlgo(int in, const Vertex *inV, Vertex *outV, Vertex *clip
 //
 ///
 
-int Clipper::clipPolygon( int in, const Vertex inV[], Vertex outV[],
-                          Vertex ll, Vertex ur )
+int Clipper::clipPolygon(int in, const Vertex inV[], Vertex outV[],Vertex ll, Vertex ur)
 {
-    // YOUR CODE GOES HERE
+    Vertex outV_left[50];
+    Vertex outV_right[50];
+    Vertex outV_bottom[50];
+    Vertex outV_top[50];
+    Vertex *inVertices = new Vertex[50];
 
+    // Copy initial vertices in array. 
+    for (int i = 0; i < in; i++)
+    {
+        inVertices[i] = inV[i];
+    }
+
+    int outVertices = 0;
     Vertex clipWindowVertices[4];
+
     clipWindowVertices[0] = ll;
 
     clipWindowVertices[1].x = ur.x;
     clipWindowVertices[1].y = ll.y;
-    
+
     clipWindowVertices[2] = ur;
 
     clipWindowVertices[3].x = ll.x;
     clipWindowVertices[3].y = ur.y;
-
-    std::cout << std::endl << std::endl << "New Figure: \n";
-    std::cout << "Clip edge 1: (" << clipWindowVertices[0].x << " , " << clipWindowVertices[0].y << ")" << std::endl;
-    std::cout << "Clip edge 2: (" << clipWindowVertices[1].x << " , " << clipWindowVertices[1].y << ")" << std::endl;
-    std::cout << "Clip edge 3: (" << clipWindowVertices[2].x << " , " << clipWindowVertices[2].y << ")" << std::endl;
-    std::cout << "Clip edge 4: (" << clipWindowVertices[3].x << " , " << clipWindowVertices[3].y << ")" << std::endl;
     
-    outVertices = 0;
-    sutherlandHodgmanAlgo(in, inV, outV, clipWindowVertices);
+    // left side
+    outVertices = sutherlandHodgmanAlgo(in, inVertices, outV_left, clipWindowVertices[0], clipWindowVertices[3], 4);
+    // right side
+    outVertices = sutherlandHodgmanAlgo(in, outV_left, outV_right, clipWindowVertices[1], clipWindowVertices[2], 2);
+    // top side
+    outVertices = sutherlandHodgmanAlgo(in, outV_right, outV_top, clipWindowVertices[3], clipWindowVertices[2], 3);
+    // bottom side
+    outVertices = sutherlandHodgmanAlgo(in, outV_top, outV_bottom, clipWindowVertices[0], clipWindowVertices[1], 1);
 
-    std::cout << std::endl << std::endl << "Done figure..!! ";
+    // Combining all the vertices t return 
+    for (int i = 0; i < outVertices; i++)
+    {
+        outV[i] = outV_bottom[i];
+    }
 
     return outVertices;  // remember to return the outgoing vertex count!
 
