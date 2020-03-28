@@ -197,7 +197,6 @@ void makePolygons( Canvas &C ) {
     int wl;
 
 
-
     ///
     // first polygon:  entirely within region
     ///
@@ -209,7 +208,7 @@ void makePolygons( Canvas &C ) {
         drawPolygon( tmp, wl, C );
 	nv[0] = wl;
     }
-
+    
     ///
     // second polygon:  entirely outside region
     ///
@@ -222,7 +221,7 @@ void makePolygons( Canvas &C ) {
         drawPolygon( tmp, wl, C );
 	nv[1] = wl;
     }
-
+    
     ///
     // third polygon:  halfway outside on left
     ///
@@ -235,6 +234,7 @@ void makePolygons( Canvas &C ) {
 	nv[2] = wl;
     }
 
+   
     ///
     // fourth polygon:  part outside on right
     ///
@@ -294,7 +294,7 @@ void makePolygons( Canvas &C ) {
         drawPolygon( tmp, wl, C );
         nv[7] = wl;
     }
-
+    /**/
 }
 
 ///
