@@ -26,7 +26,7 @@ Clipper::Clipper() {
 ///
 // inside
 //
-// Checks if the vertex is inside the polygon.
+// Checks if the vertex is inside the polygon w.r.t. the endpoints of the current edge used for clipping.
 //
 // @param v1    the first vertex
 // @param v2    the second vertex
@@ -35,7 +35,7 @@ Clipper::Clipper() {
 // @return true if vertex is inside the polygon
 //
 ///
-bool inside(Vertex v, Vertex v1, Vertex v2, int side)
+bool Clipper:: inside(Vertex v, Vertex v1, Vertex v2, int side)
 {
     if (side == 1 && v1.y < v.y)
     {
@@ -66,23 +66,27 @@ bool inside(Vertex v, Vertex v1, Vertex v2, int side)
 ///
 // sutherlandHodgmanAlgo
 //
-// Clip vertices w.r.t. the current edge being selected.
+// Clip vertices using Sutherland Hodgman Algorithm
+// w.r.t. the current edge being selected.
 // 
-// @param in    the number of vertices
-// @param inV   the first vertex
-// @param v2    the second vertex
-// @param v3    the third vertex
-// @param v4    the fourth vertex
+// @param in            the number of incoming vertices
+// @param inVertices    incoming vertices array
+// @param outVertices   outgoing vertices array
+// @param v1            the first vertex of edge
+// @param v2            the second vertex of edge
+// @param side          the side of the edge
 //
-// @return intersection point of the lines
+// @return              number of elements in array of 
+//                      vertices clipped w.r.t. current edge
 //
 ///
-int sutherlandHodgmanAlgo(int in, const Vertex *inVertices, Vertex *outVertices, Vertex v1, Vertex v2, int side)
+int Clipper:: sutherlandHodgmanAlgo(int in, const Vertex *inVertices, Vertex *outVertices, Vertex v1, Vertex v2, int side)
 {
     int outGoingCount = 0;
 
     Vertex second_vertex = inVertices[in - 1];
 
+    // Iterate through all edges
     for (int i = 0; i < in; i++)
     {
         Vertex first_vertex = inVertices[i];
@@ -164,33 +168,44 @@ int Clipper::clipPolygon(int in, const Vertex inV[], Vertex outV[],Vertex ll, Ve
     }
 
     int outVertices = 0;
+    
+    // Store the clip window edges
     Vertex clipWindowVertices[4];
 
+    // bottom left
     clipWindowVertices[0] = ll;
 
+    // bottom right 
     clipWindowVertices[1].x = ur.x;
     clipWindowVertices[1].y = ll.y;
 
+    // top right
     clipWindowVertices[2] = ur;
 
+    // top left
     clipWindowVertices[3].x = ll.x;
     clipWindowVertices[3].y = ur.y;
     
-    // left side
-    outVertices = sutherlandHodgmanAlgo(in, inVertices, outV_left, clipWindowVertices[0], clipWindowVertices[3], 4);
-    // right side
-    outVertices = sutherlandHodgmanAlgo(in, outV_left, outV_right, clipWindowVertices[1], clipWindowVertices[2], 2);
-    // top side
-    outVertices = sutherlandHodgmanAlgo(in, outV_right, outV_top, clipWindowVertices[3], clipWindowVertices[2], 3);
-    // bottom side
-    outVertices = sutherlandHodgmanAlgo(in, outV_top, outV_bottom, clipWindowVertices[0], clipWindowVertices[1], 1);
+    // Start clipping
 
-    // Combining all the vertices t return 
+    // w.r.t. left side
+    outVertices = sutherlandHodgmanAlgo(in, inVertices, outV_left, clipWindowVertices[0], clipWindowVertices[3], 4);
+    
+    // w.r.t. right side
+    outVertices = sutherlandHodgmanAlgo(outVertices, outV_left, outV_right, clipWindowVertices[1], clipWindowVertices[2], 2);
+    
+    // w.r.t. top side
+    outVertices = sutherlandHodgmanAlgo(outVertices, outV_right, outV_top, clipWindowVertices[3], clipWindowVertices[2], 3);
+    
+    // w.r.t. bottom side
+    outVertices = sutherlandHodgmanAlgo(outVertices, outV_top, outV_bottom, clipWindowVertices[0], clipWindowVertices[1], 1);
+
+    // Combining all the vertices to return 
     for (int i = 0; i < outVertices; i++)
     {
         outV[i] = outV_bottom[i];
     }
 
-    return outVertices;  // remember to return the outgoing vertex count!
-
+    // return the outgoing vertex count
+    return outVertices;
 }
