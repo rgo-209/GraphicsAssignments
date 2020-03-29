@@ -1,0 +1,3 @@
+﻿  tessMain.cpp
+C:\Users\hp\Desktop\OpenGLProjects\Lab4\Lab4\tessMain.cpp(210,9): warning C4101: 'i': unreferenced local variable
+  Lab4.vcxproj -> C:\Users\hp\Desktop\OpenGLProjects\Lab4\Debug\Lab4.exe
