@@ -222,6 +222,99 @@ void makeCylinder( Canvas &C, float radius, int radialDivisions, int heightDivis
         heightDivisions = 1;
 
     // YOUR IMPLEMENTATION HERE
+    Vertex v_a;
+    Vertex v_b;
+
+    Vertex v_0_n_0;
+    Vertex v_0_p_0;
+
+    Vertex v_ax_n_az;
+    Vertex v_ax_p_az;
+
+    Vertex v_bx_n_bz;
+    Vertex v_bx_p_bz;
+
+    Vertex v_ax_by_az;
+    Vertex v_ax_ay_az;
+    Vertex v_bx_by_bz;
+    Vertex v_bx_ay_bz;
+
+    for (int x = 1; x <= radialDivisions; x++)
+    {
+        // Compute the points for calculating
+        // the points on the base
+        v_a.x = float(radius * cos(2 * (x - 1) * 3.14 / radialDivisions));
+        v_b.x = float(radius * cos(2 * (  x  ) * 3.14 / radialDivisions));
+
+        v_a.z = float(radius * sin(2 * (x - 1) * 3.14 / radialDivisions));
+        v_b.z = float(radius * sin(2 * (  x  ) * 3.14 / radialDivisions));
+
+        v_0_n_0.x = 0;
+        v_0_n_0.y = neg_unit;
+        v_0_n_0.z = 0;
+
+        v_0_p_0.x = 0;
+        v_0_p_0.y = unit;
+        v_0_p_0.z = 0;
+
+        v_ax_n_az.x = v_a.x;
+        v_ax_n_az.y = neg_unit;
+        v_ax_n_az.z = v_a.z;
+
+        v_ax_p_az.x = v_a.x;
+        v_ax_p_az.y = unit;
+        v_ax_p_az.z = v_a.z;
+
+        v_bx_n_bz.x = v_b.x;
+        v_bx_n_bz.y = neg_unit;
+        v_bx_n_bz.z = v_b.z;
+
+        v_bx_p_bz.x = v_b.x;
+        v_bx_p_bz.y = unit;
+        v_bx_p_bz.z = v_b.z;
+
+
+        // Base of cylinder
+        //C.addTriangle(v_0_n_0, v_ax_n_az, v_bx_n_bz);
+
+        // Top of cylinder
+        C.addTriangle(v_bx_p_bz , v_ax_p_az ,  v_0_p_0 );
+
+        
+        for (int y = 1; y <= heightDivisions; y++)
+        {
+            // Compute the points for calculating 
+            // the points on the curve
+            v_a.y = float((y - 1) / heightDivisions - 0.5);
+            v_b.y = float(   y    / heightDivisions - 0.5);
+            
+            // Compute the points for calculating
+            // the points on the curved surface
+            v_ax_by_az.x = v_a.x;
+            v_ax_by_az.y = v_b.y;
+            v_ax_by_az.z = v_a.z;
+
+            v_bx_ay_bz.x = v_b.x;
+            v_bx_ay_bz.y = v_a.y;
+            v_bx_ay_bz.z = v_b.z;
+
+            v_ax_ay_az.x = v_a.x;
+            v_ax_ay_az.y = v_a.y;
+            v_ax_ay_az.z = v_a.z;
+
+            v_bx_by_bz.x = v_b.x;
+            v_bx_by_bz.y = v_b.y;
+            v_bx_by_bz.z = v_b.z;
+
+            // For tessalation of right side
+            // it's partially visible
+            C.addTriangle(v_ax_by_az, v_bx_by_bz, v_ax_ay_az);
+            // For tessalation of left side
+            // it's almost completely visible
+            C.addTriangle(v_bx_by_bz, v_bx_ay_bz, v_ax_ay_az);
+
+        }
+    }
 }
 
 
