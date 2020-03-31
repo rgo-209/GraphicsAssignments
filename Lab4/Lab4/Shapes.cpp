@@ -172,7 +172,7 @@ void makeCube( Canvas &C, int subdivisions )
             v_bx_p_by.y = unit;
             v_bx_p_by.z = v_b.y;
 
-           
+            
             // Face Front
             C.addTriangle(v_ax_ay_p, v_bx_ay_p, v_ax_by_p);
             C.addTriangle(v_ax_by_p, v_bx_ay_p, v_bx_by_p);
@@ -275,7 +275,7 @@ void makeCylinder( Canvas &C, float radius, int radialDivisions, int heightDivis
 
 
         // Base of cylinder
-        //C.addTriangle(v_0_n_0, v_ax_n_az, v_bx_n_bz);
+        C.addTriangle(v_0_n_0, v_ax_n_az, v_bx_n_bz);
 
         // Top of cylinder
         C.addTriangle(v_bx_p_bz , v_ax_p_az ,  v_0_p_0 );
@@ -337,7 +337,104 @@ void makeCone( Canvas &C, float radius, int radialDivisions, int heightDivisions
     if( heightDivisions < 1 )
         heightDivisions = 1;
 
-    // YOUR IMPLEMENTATION HERE
+    Vertex v_a;
+    Vertex v_b;
+
+    Vertex v_ax_p_az;
+    Vertex v_ax_n_az;
+
+    Vertex v_bx_p_bz;
+    Vertex v_bx_n_bz;
+
+    Vertex v_a_diff;
+    Vertex v_b_diff;
+
+    Vertex v_bx_ay_bz;
+    v_bx_ay_bz.x = 0;
+    v_bx_ay_bz.y = 0;
+    v_bx_ay_bz.z = 0;
+    
+    Vertex v_ax_ay_az;
+
+    Vertex v_0_n_0;
+    v_0_n_0.x = 0;
+    v_0_n_0.y = neg_unit;
+    v_0_n_0.z = 0;
+
+    Vertex v_0_p_0;
+    v_0_p_0.x = 0;
+    v_0_p_0.y = unit;
+    v_0_p_0.z = 0;
+
+
+    for (int x = 1; x <= radialDivisions; x++)
+    {
+        v_a.x = float(radius * cos(2 * (x - 1) * 3.14 / radialDivisions));
+        v_a.z = float(radius * sin(2 * (x - 1) * 3.14 / radialDivisions)); 
+        
+        v_b.x = float(radius * cos(2 * (  x  ) * 3.14 / radialDivisions));
+        v_b.z = float(radius * sin(2 * (  x  ) * 3.14 / radialDivisions));
+
+
+        v_ax_p_az.x = v_a.x;
+        v_ax_p_az.y = unit;
+        v_ax_p_az.z = v_a.z;
+
+        v_ax_n_az.x = v_a.x;
+        v_ax_n_az.y = neg_unit;
+        v_ax_n_az.z = v_a.z;
+
+        v_bx_p_bz.x = v_b.x;
+        v_bx_p_bz.y = unit;
+        v_bx_p_bz.z = v_b.z;
+
+        v_bx_n_bz.x = v_b.x;
+        v_bx_n_bz.y = neg_unit;
+        v_bx_n_bz.z = v_b.z;
+
+        C.addTriangle(v_ax_n_az, v_bx_n_bz, v_0_n_0);
+
+        v_a.y = neg_unit;
+        v_b.y = neg_unit;
+        
+        for (int y = 1; y <= heightDivisions - 1; y++)
+        {
+            v_ax_ay_az = v_a;
+         
+            v_a_diff.x = v_a.x - (v_a.x / heightDivisions);
+            v_a_diff.y = v_a.y + (1 / (float)heightDivisions);
+            v_a_diff.z = v_a.z - (v_a.z / heightDivisions);
+
+            v_b_diff.x = v_b.x - (v_b.x / heightDivisions);
+            v_b_diff.y = v_a.y + (1 / (float)heightDivisions);
+            v_b_diff.z = v_b.z - (v_b.z / heightDivisions);
+
+            v_bx_ay_bz.x = v_b.x;
+            v_bx_ay_bz.y = v_a.y;
+            v_bx_ay_bz.z = v_b.z;
+
+            v_ax_ay_az.x = v_a.x;
+            v_ax_ay_az.y = v_a.y;
+            v_ax_ay_az.z = v_a.z;
+
+            C.addTriangle(v_ax_ay_az, v_a_diff, v_bx_ay_bz);
+
+            C.addTriangle(v_a_diff, v_b_diff, v_bx_ay_bz);
+
+            v_a.x = v_a.x - (v_a.x / heightDivisions);
+            v_b.x = v_b.x - (v_b.x / heightDivisions);
+
+            v_a.y = v_a.y + (1 / (float)heightDivisions);
+
+            v_a.z = v_a.z - (v_a.z / heightDivisions);
+            v_b.z = v_b.z - (v_b.z / heightDivisions);
+        }
+
+        v_bx_ay_bz.x = v_b.x;
+        v_bx_ay_bz.y = v_a.y;
+        v_bx_ay_bz.z = v_b.z;
+        C.addTriangle(v_a, v_0_p_0, v_bx_ay_bz);
+    }
 }
 
 
