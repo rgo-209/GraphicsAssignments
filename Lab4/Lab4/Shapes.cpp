@@ -62,6 +62,7 @@ void makeCube( Canvas &C, int subdivisions )
     Vertex v_bx_n_by;
     Vertex v_bx_p_by;
 
+
     for (int x = 1; x <= subdivisions; x++)
     {
         // Compute points on the face
@@ -329,12 +330,12 @@ void makeCylinder( Canvas &C, float radius, int radialDivisions, int heightDivis
 //
 // Can only use calls to C.addTriangle()
 ///
-void makeCone( Canvas &C, float radius, int radialDivisions, int heightDivisions )
+void makeCone(Canvas& C, float radius, int radialDivisions, int heightDivisions)
 {
-    if( radialDivisions < 3 )
+    if (radialDivisions < 3)
         radialDivisions = 3;
 
-    if( heightDivisions < 1 )
+    if (heightDivisions < 1)
         heightDivisions = 1;
 
     Vertex v_a;
@@ -353,7 +354,7 @@ void makeCone( Canvas &C, float radius, int radialDivisions, int heightDivisions
     v_bx_ay_bz.x = 0;
     v_bx_ay_bz.y = 0;
     v_bx_ay_bz.z = 0;
-    
+
     Vertex v_ax_ay_az;
 
     Vertex v_0_n_0;
@@ -370,10 +371,10 @@ void makeCone( Canvas &C, float radius, int radialDivisions, int heightDivisions
     for (int x = 1; x <= radialDivisions; x++)
     {
         v_a.x = float(radius * cos(2 * (x - 1) * 3.14 / radialDivisions));
-        v_a.z = float(radius * sin(2 * (x - 1) * 3.14 / radialDivisions)); 
-        
-        v_b.x = float(radius * cos(2 * (  x  ) * 3.14 / radialDivisions));
-        v_b.z = float(radius * sin(2 * (  x  ) * 3.14 / radialDivisions));
+        v_a.z = float(radius * sin(2 * (x - 1) * 3.14 / radialDivisions));
+
+        v_b.x = float(radius * cos(2 * (x) * 3.14 / radialDivisions));
+        v_b.z = float(radius * sin(2 * (x) * 3.14 / radialDivisions));
 
 
         v_ax_p_az.x = v_a.x;
@@ -396,11 +397,11 @@ void makeCone( Canvas &C, float radius, int radialDivisions, int heightDivisions
 
         v_a.y = neg_unit;
         v_b.y = neg_unit;
-        
+
         for (int y = 1; y <= heightDivisions - 1; y++)
         {
             v_ax_ay_az = v_a;
-         
+
             v_a_diff.x = v_a.x - (v_a.x / heightDivisions);
             v_a_diff.y = v_a.y + (1 / (float)heightDivisions);
             v_a_diff.z = v_a.z - (v_a.z / heightDivisions);
@@ -437,6 +438,72 @@ void makeCone( Canvas &C, float radius, int radialDivisions, int heightDivisions
     }
 }
 
+///
+// drawSlices - Create slice of the given sphere of a given radius,
+// centered at the origin, using spherical coordinates with separate
+// number of thetha and phi subdivisions.
+//
+// @param radius - Radius of the sphere
+// @param slices - number of subdivisions in the theta direction
+// @param v_a - vertex of the slice.
+// @param v_b - vertex of the slice.
+// @param v_c - vertex of the slice.
+//
+// Can only use calls to C.addTriangle()
+///
+void drawSlices(Canvas &C , float radius, int slices, Vertex v_a, Vertex v_b, Vertex v_c)
+{
+
+    if (slices > 1)
+    {
+        // Define required vertices
+        Vertex v_a_b_2;
+        v_a_b_2.x = (v_a.x + v_b.x) / 2;
+        v_a_b_2.y = (v_a.y + v_b.y) / 2;
+        v_a_b_2.z = (v_a.z + v_b.z) / 2;
+
+        Vertex v_a_c_2;
+        v_a_c_2.x = (v_a.x + v_c.x) / 2;
+        v_a_c_2.y = (v_a.y + v_c.y) / 2;
+        v_a_c_2.z = (v_a.z + v_c.z) / 2;
+
+        Vertex v_b_c_2;
+        v_b_c_2.x = (v_c.x + v_b.x) / 2;
+        v_b_c_2.y = (v_c.y + v_b.y) / 2;
+        v_b_c_2.z = (v_c.z + v_b.z) / 2;
+
+        // Recursively call function to draw slices one by one
+        drawSlices(C, radius, (slices - 1),   v_a   , v_a_b_2 , v_a_c_2);
+        drawSlices(C, radius, (slices - 1), v_a_b_2 , v_b_c_2 , v_a_c_2);
+        drawSlices(C, radius, (slices - 1), v_a_b_2 ,   v_b   , v_b_c_2);
+        drawSlices(C, radius, (slices - 1), v_a_c_2 , v_b_c_2 ,   v_c  );
+    }
+    else
+    {
+        //Define all required vertices
+        float a_div = (float(sqrt(v_a.x * v_a.x + v_a.y * v_a.y + v_a.z * v_a.z)));
+        Vertex v_aa_r;
+        v_aa_r.x = (v_a.x / a_div) * radius;
+        v_aa_r.y = (v_a.y / a_div) * radius;
+        v_aa_r.z = (v_a.z / a_div) * radius;
+
+        float b_div = (float(sqrt(v_b.x * v_b.x + v_b.y * v_b.y + v_b.z * v_b.z)));
+        Vertex v_bb_r;
+        v_bb_r.x = (v_b.x / b_div) * radius;
+        v_bb_r.y = (v_b.y / b_div) * radius;
+        v_bb_r.z = (v_b.z / b_div) * radius;
+
+        float c_div = (float(sqrt(v_c.x * v_c.x + v_c.y * v_c.y + v_c.z * v_c.z)));
+        Vertex v_cc_r;
+        v_cc_r.x = (v_c.x / c_div) * radius;
+        v_cc_r.y = (v_c.y / c_div) * radius;
+        v_cc_r.z = (v_c.z / c_div) * radius;
+
+        //After normalization the triangles are printed on screen. 
+        C.addTriangle(v_aa_r, v_bb_r, v_cc_r);
+    }
+}
+
 
 ///
 // makeSphere - Create sphere of a given radius, centered at the origin, 
@@ -449,16 +516,99 @@ void makeCone( Canvas &C, float radius, int radialDivisions, int heightDivisions
 //
 // Can only use calls to C.addTriangle()
 ///
-void makeSphere( Canvas &C, float radius, int slices, int stacks )
+void makeSphere( Canvas &C , float radius, int slices, int stacks )
 {
     // IF DOING RECURSIVE SUBDIVISION:
     //   use a minimum value of 1 instead of 3
     //   add an 'else' clause to set a maximum value of 5
-    if( slices < 3 )
-        slices = 3;
+    if( slices < 1 )
+        slices = 1;
+    else if (slices > 5)
+        slices = 5;
 
     if( stacks < 3 )
         stacks = 3;
     
-    // YOUR IMPLEMENTATION HERE
+    // Define all required vertices
+    Vertex v_r_1_0, v_r_n1_0;
+    Vertex v_1_0_r, v_1_0_nr;
+    Vertex v_nr_1_0, v_nr_n1_0;
+    Vertex v_n1_0_nr, v_n1_0_r;
+    Vertex v_0_r_1, v_0_r_n1;
+    Vertex v_0_nr_n1, v_0_nr_1;
+
+    v_r_1_0.x = radius;
+    v_r_1_0.y = 1;
+    v_r_1_0.z = 0;
+
+    v_r_n1_0.x = radius;
+    v_r_n1_0.y = -1;
+    v_r_n1_0.z = 0;
+
+    v_1_0_r.x = 1;
+    v_1_0_r.y = 0;
+    v_1_0_r.z = radius;
+
+    v_1_0_nr.x = 1;
+    v_1_0_nr.y = 0;
+    v_1_0_nr.z = -radius;
+
+    v_nr_1_0.x = -radius;
+    v_nr_1_0.y = 1;
+    v_nr_1_0.z = 0;
+
+    v_nr_n1_0.x = -radius;
+    v_nr_n1_0.y = -1;
+    v_nr_n1_0.z = 0;
+
+    v_n1_0_nr.x = -1;
+    v_n1_0_nr.y = 0;
+    v_n1_0_nr.z = -radius;
+
+    v_n1_0_r.x = -1;
+    v_n1_0_r.y = 0;
+    v_n1_0_r.z = radius;
+
+    v_0_r_1.x = 0;
+    v_0_r_1.y = radius;
+    v_0_r_1.z = 1;
+    
+    v_0_r_n1.x = 0;
+    v_0_r_n1.y = radius;
+    v_0_r_n1.z = -1;
+
+    v_0_nr_n1.x = 0 ;
+    v_0_nr_n1.y = -radius;
+    v_0_nr_n1.z = -1;
+
+    v_0_nr_1.x = 0;
+    v_0_nr_1.y = -radius;
+    v_0_nr_1.z = 1;
+
+    // Call function to draw slices one by one
+    drawSlices(C, radius, slices, v_0_r_1, v_1_0_r, v_r_1_0);
+    drawSlices(C, radius, slices, v_r_n1_0, v_1_0_nr, v_1_0_r);
+
+    drawSlices(C, radius, slices, v_r_1_0, v_1_0_r, v_1_0_nr);
+    drawSlices(C, radius, slices, v_nr_1_0, v_n1_0_nr, v_n1_0_r);
+    drawSlices(C, radius, slices, v_nr_n1_0, v_n1_0_r, v_n1_0_nr);
+
+    drawSlices(C, radius, slices, v_0_r_1, v_nr_1_0, v_n1_0_r);
+    drawSlices(C, radius, slices, v_0_r_1, v_r_1_0, v_nr_1_0);
+    drawSlices(C, radius, slices, v_0_r_1, v_n1_0_r, v_0_nr_1);
+    drawSlices(C, radius, slices, v_0_r_1, v_0_nr_1, v_1_0_r);
+
+    drawSlices(C, radius, slices, v_0_r_n1, v_n1_0_nr, v_nr_1_0);
+    drawSlices(C, radius, slices, v_0_r_n1, v_r_1_0, v_1_0_nr);
+
+    drawSlices(C, radius, slices, v_0_nr_n1, v_nr_n1_0, v_n1_0_nr);
+    drawSlices(C, radius, slices, v_0_nr_n1, v_1_0_nr, v_r_n1_0);
+    drawSlices(C, radius, slices, v_0_nr_1, v_n1_0_r, v_nr_n1_0);
+    drawSlices(C, radius, slices, v_0_nr_1, v_r_n1_0, v_1_0_r);
+    drawSlices(C, radius, slices, v_0_nr_n1, v_r_n1_0, v_nr_n1_0);
+    
+    drawSlices(C, radius, slices, v_0_r_n1, v_nr_1_0, v_r_1_0);
+    drawSlices(C, radius, slices, v_0_r_n1, v_1_0_nr, v_0_nr_n1);
+    drawSlices(C, radius, slices, v_0_r_n1, v_0_nr_n1, v_n1_0_nr);
+    drawSlices(C, radius, slices, v_0_nr_1, v_nr_n1_0, v_r_n1_0);
 }
