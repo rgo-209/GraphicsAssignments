@@ -173,7 +173,8 @@ void makeCube( Canvas &C, int subdivisions )
             v_bx_p_by.y = unit;
             v_bx_p_by.z = v_b.y;
 
-            
+            // All orientations according to the initial position
+
             // Face Front
             C.addTriangle(v_ax_ay_p, v_bx_ay_p, v_ax_by_p);
             C.addTriangle(v_ax_by_p, v_bx_ay_p, v_bx_by_p);
@@ -222,7 +223,9 @@ void makeCylinder( Canvas &C, float radius, int radialDivisions, int heightDivis
     if( heightDivisions < 1 )
         heightDivisions = 1;
 
-    // YOUR IMPLEMENTATION HERE
+
+
+    // Define required variables
     Vertex v_a;
     Vertex v_b;
 
@@ -275,6 +278,8 @@ void makeCylinder( Canvas &C, float radius, int radialDivisions, int heightDivis
         v_bx_p_bz.z = v_b.z;
 
 
+        // All orientations according to the initial position
+
         // Base of cylinder
         C.addTriangle(v_0_n_0, v_ax_n_az, v_bx_n_bz);
 
@@ -307,11 +312,14 @@ void makeCylinder( Canvas &C, float radius, int radialDivisions, int heightDivis
             v_bx_by_bz.y = v_b.y;
             v_bx_by_bz.z = v_b.z;
 
+
+            // All orientations according to the initial position
+
             // For tessalation of right side
-            // it's partially visible
+            // it's partially visible from initial position
             C.addTriangle(v_ax_by_az, v_bx_by_bz, v_ax_ay_az);
             // For tessalation of left side
-            // it's almost completely visible
+            // it's almost completely visible from initial position
             C.addTriangle(v_bx_by_bz, v_bx_ay_bz, v_ax_ay_az);
 
         }
@@ -338,103 +346,114 @@ void makeCone(Canvas& C, float radius, int radialDivisions, int heightDivisions)
     if (heightDivisions < 1)
         heightDivisions = 1;
 
+
+    //the angle for every triangle
+    double elevation_angle = 2 * 3.14 / (double)radialDivisions;
+
+    //the height of individual subvision
+    float cone_height = (2 * unit) / (float)heightDivisions;
+
+    //decrease in radius for every level
+    float radius_difference = unit / (float)heightDivisions;
+
+    // Defining all required points here
     Vertex v_a;
+    v_a.x = radius;
+    v_a.y = 0;
+    v_a.z = 0;
+
     Vertex v_b;
-
-    Vertex v_ax_p_az;
-    Vertex v_ax_n_az;
-
-    Vertex v_bx_p_bz;
-    Vertex v_bx_n_bz;
-
-    Vertex v_a_diff;
-    Vertex v_b_diff;
-
-    Vertex v_bx_ay_bz;
-    v_bx_ay_bz.x = 0;
-    v_bx_ay_bz.y = 0;
-    v_bx_ay_bz.z = 0;
+    v_b.x = 0;
+    v_b.y = 0;
+    v_b.z = 0;
 
     Vertex v_ax_ay_az;
+    v_ax_ay_az.x = 0;
+    v_ax_ay_az.y = 0;
+    v_ax_ay_az.z = 0;
+
+    Vertex v_bx_by_bz;
+    v_bx_by_bz.x = 0;
+    v_bx_by_bz.y = 0;
+    v_bx_by_bz.z = 0;
 
     Vertex v_0_n_0;
     v_0_n_0.x = 0;
-    v_0_n_0.y = neg_unit;
     v_0_n_0.z = 0;
 
-    Vertex v_0_p_0;
-    v_0_p_0.x = 0;
-    v_0_p_0.y = unit;
-    v_0_p_0.z = 0;
+    Vertex v_a_diff;
+    v_a_diff.x = 0;
+    v_a_diff.y = 0;
+    v_a_diff.z = 0;
+
+    Vertex v_b_diff;
+    v_b_diff.x = v_a.x - radius_difference;
+    v_b_diff.y = 0;
+    v_b_diff.z = v_a.z;
+
+    for (int i = 0; i < radialDivisions; i++) {
 
 
-    for (int x = 1; x <= radialDivisions; x++)
-    {
-        v_a.x = float(radius * cos(2 * (x - 1) * 3.14 / radialDivisions));
-        v_a.z = float(radius * sin(2 * (x - 1) * 3.14 / radialDivisions));
-
-        v_b.x = float(radius * cos(2 * (x) * 3.14 / radialDivisions));
-        v_b.z = float(radius * sin(2 * (x) * 3.14 / radialDivisions));
-
-
-        v_ax_p_az.x = v_a.x;
-        v_ax_p_az.y = unit;
-        v_ax_p_az.z = v_a.z;
-
-        v_ax_n_az.x = v_a.x;
-        v_ax_n_az.y = neg_unit;
-        v_ax_n_az.z = v_a.z;
-
-        v_bx_p_bz.x = v_b.x;
-        v_bx_p_bz.y = unit;
-        v_bx_p_bz.z = v_b.z;
-
-        v_bx_n_bz.x = v_b.x;
-        v_bx_n_bz.y = neg_unit;
-        v_bx_n_bz.z = v_b.z;
-
-        C.addTriangle(v_ax_n_az, v_bx_n_bz, v_0_n_0);
-
+        v_0_n_0.y = neg_unit;
         v_a.y = neg_unit;
         v_b.y = neg_unit;
 
-        for (int y = 1; y <= heightDivisions - 1; y++)
-        {
-            v_ax_ay_az = v_a;
+        // x value will be the cos value 
+        v_b.x = (float)(radius * cos(elevation_angle * (i + 1)));
+        // z value will be the sin value
+        v_b.z = (float)(radius * sin(elevation_angle * (i + 1)));
+        
+        // Draw the base
+        C.addTriangle(v_0_n_0, v_a, v_b);
 
-            v_a_diff.x = v_a.x - (v_a.x / heightDivisions);
-            v_a_diff.y = v_a.y + (1 / (float)heightDivisions);
-            v_a_diff.z = v_a.z - (v_a.z / heightDivisions);
+        v_ax_ay_az.x = v_a.x;
+        v_ax_ay_az.z = v_a.z;
 
-            v_b_diff.x = v_b.x - (v_b.x / heightDivisions);
-            v_b_diff.y = v_a.y + (1 / (float)heightDivisions);
-            v_b_diff.z = v_b.z - (v_b.z / heightDivisions);
+        v_bx_by_bz.x = v_b.x;
+        v_bx_by_bz.z = v_b.z;
 
-            v_bx_ay_bz.x = v_b.x;
-            v_bx_ay_bz.y = v_a.y;
-            v_bx_ay_bz.z = v_b.z;
+        for (int y = 0; y < heightDivisions; y++) {
 
-            v_ax_ay_az.x = v_a.x;
-            v_ax_ay_az.y = v_a.y;
-            v_ax_ay_az.z = v_a.z;
+            v_ax_ay_az.y = (cone_height * y) + neg_unit;
+            v_bx_by_bz.y = (cone_height * y) + neg_unit;
 
-            C.addTriangle(v_ax_ay_az, v_a_diff, v_bx_ay_bz);
+            //decrease the x value for next face
+            v_a_diff.x = (float)((radius - radius_difference * (y + 1)) * cos(elevation_angle * (i + 1)));
 
-            C.addTriangle(v_a_diff, v_b_diff, v_bx_ay_bz);
+            //increase the y value for next face
+            v_a_diff.y = v_ax_ay_az.y + cone_height;
 
-            v_a.x = v_a.x - (v_a.x / heightDivisions);
-            v_b.x = v_b.x - (v_b.x / heightDivisions);
+            //decrease the z value for next face
+            v_a_diff.z = (float)((radius - radius_difference * (y + 1)) * sin(elevation_angle * (i + 1)));
 
-            v_a.y = v_a.y + (1 / (float)heightDivisions);
 
-            v_a.z = v_a.z - (v_a.z / heightDivisions);
-            v_b.z = v_b.z - (v_b.z / heightDivisions);
+            //decrease the x value for next face
+            v_b_diff.x = (float)((radius - radius_difference * (y + 1)) * cos(elevation_angle * (i)));
+
+            //increase the y value for next face
+            v_b_diff.y = v_bx_by_bz.y + cone_height;
+
+            //decrease the z value for next face
+            v_b_diff.z = (float)((radius - radius_difference * (y + 1)) * sin(elevation_angle * (i)));
+
+
+            //draw one face of side
+            C.addTriangle(v_ax_ay_az, v_b_diff, v_bx_by_bz);
+            //draw another face of side
+            C.addTriangle(v_bx_by_bz, v_b_diff, v_a_diff);
+            
+            // update values for next level or face
+
+            v_ax_ay_az.x = v_b_diff.x;
+            v_ax_ay_az.z = v_b_diff.z;
+
+            v_bx_by_bz.x = v_a_diff.x;
+            v_bx_by_bz.z = v_a_diff.z;
         }
 
-        v_bx_ay_bz.x = v_b.x;
-        v_bx_ay_bz.y = v_a.y;
-        v_bx_ay_bz.z = v_b.z;
-        C.addTriangle(v_a, v_0_p_0, v_bx_ay_bz);
+        v_a.x = v_b.x;
+        v_a.z = v_b.z;
+
     }
 }
 
@@ -453,7 +472,6 @@ void makeCone(Canvas& C, float radius, int radialDivisions, int heightDivisions)
 ///
 void drawSlices(Canvas &C , float radius, int slices, Vertex v_a, Vertex v_b, Vertex v_c)
 {
-
     if (slices > 1)
     {
         // Define required vertices
@@ -588,25 +606,20 @@ void makeSphere( Canvas &C , float radius, int slices, int stacks )
     // Call function to draw slices one by one
     drawSlices(C, radius, slices, v_0_r_1, v_1_0_r, v_r_1_0);
     drawSlices(C, radius, slices, v_r_n1_0, v_1_0_nr, v_1_0_r);
-
-    drawSlices(C, radius, slices, v_r_1_0, v_1_0_r, v_1_0_nr);
-    drawSlices(C, radius, slices, v_nr_1_0, v_n1_0_nr, v_n1_0_r);
     drawSlices(C, radius, slices, v_nr_n1_0, v_n1_0_r, v_n1_0_nr);
-
+    drawSlices(C, radius, slices, v_nr_1_0, v_n1_0_nr, v_n1_0_r);
+    drawSlices(C, radius, slices, v_r_1_0, v_1_0_r, v_1_0_nr);
     drawSlices(C, radius, slices, v_0_r_1, v_nr_1_0, v_n1_0_r);
     drawSlices(C, radius, slices, v_0_r_1, v_r_1_0, v_nr_1_0);
     drawSlices(C, radius, slices, v_0_r_1, v_n1_0_r, v_0_nr_1);
     drawSlices(C, radius, slices, v_0_r_1, v_0_nr_1, v_1_0_r);
-
     drawSlices(C, radius, slices, v_0_r_n1, v_n1_0_nr, v_nr_1_0);
     drawSlices(C, radius, slices, v_0_r_n1, v_r_1_0, v_1_0_nr);
-
     drawSlices(C, radius, slices, v_0_nr_n1, v_nr_n1_0, v_n1_0_nr);
     drawSlices(C, radius, slices, v_0_nr_n1, v_1_0_nr, v_r_n1_0);
     drawSlices(C, radius, slices, v_0_nr_1, v_n1_0_r, v_nr_n1_0);
     drawSlices(C, radius, slices, v_0_nr_1, v_r_n1_0, v_1_0_r);
-    drawSlices(C, radius, slices, v_0_nr_n1, v_r_n1_0, v_nr_n1_0);
-    
+    drawSlices(C, radius, slices, v_0_nr_n1, v_r_n1_0, v_nr_n1_0);   
     drawSlices(C, radius, slices, v_0_r_n1, v_nr_1_0, v_r_1_0);
     drawSlices(C, radius, slices, v_0_r_n1, v_1_0_nr, v_0_nr_n1);
     drawSlices(C, radius, slices, v_0_r_n1, v_0_nr_n1, v_n1_0_nr);

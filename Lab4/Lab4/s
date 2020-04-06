@@ -1,0 +1,98 @@
+
+	double elevation_angle = 2 * 3.14 / (double)radialDivisions;
+    //the angle for every triangle
+
+    float cone_height = (2 * unit) / (float)heightDivisions;
+    //the height of individual subvision
+
+    float radius_difference = unit / (float)heightDivisions;
+    //decrease in radius for every level
+
+    Vertex v_a;
+    v_a.x = radius;
+    v_a.y = 0;
+    v_a.z = 0;
+    
+    Vertex v_b;
+    v_b.x = 0;
+    v_b.y = 0;
+    v_b.z = 0;
+
+    Vertex v_ax_ay_az;
+    v_ax_ay_az.x = 0;
+    v_ax_ay_az.y = 0;
+    v_ax_ay_az.z = 0; 
+    
+    Vertex v_bx_by_bz;
+    v_bx_by_bz.x = 0;
+    v_bx_by_bz.y = 0;
+    v_bx_by_bz.z = 0;
+    
+    Vertex v_0_n_0;
+    v_0_n_0.x = 0;
+    v_0_n_0.z = 0;
+
+
+    Vertex v_a_diff;
+    v_a_diff.x = 0;
+    v_a_diff.y = 0;
+    v_a_diff.z = 0;
+
+    Vertex v_b_diff;
+    v_b_diff.x = v_a.x - radius_difference;
+    v_b_diff.y = 0;
+    v_b_diff.z = v_a.z;
+
+    for (int i = 0; i < radialDivisions; i++) {
+        
+
+        v_0_n_0.y = neg_unit;
+        v_a.y = neg_unit;
+        v_b.y = neg_unit;
+        
+        v_b.x = (float)(radius * cos(elevation_angle * (i + 1)));//x = cos(a)
+        v_b.z = (float)(radius * sin(elevation_angle * (i + 1)));//z = sin(a)
+
+        C.addTriangle(v_0_n_0, v_a, v_b);//bottom circle
+
+        v_ax_ay_az.x = v_a.x;
+        v_ax_ay_az.z = v_a.z;
+        
+        v_bx_by_bz.x = v_b.x;
+        v_bx_by_bz.z = v_b.z;
+
+        for (int y = 0; y < heightDivisions; y++) {
+            
+            v_ax_ay_az.y = (cone_height * y) + neg_unit;
+            v_bx_by_bz.y = (cone_height * y) + neg_unit;
+
+            v_a_diff.x = (float)((radius - radius_difference * (y + 1)) * cos(elevation_angle * (i + 1)));
+            //decrease of x
+            
+            v_a_diff.y = v_ax_ay_az.y + cone_height;
+            
+            v_a_diff.z = (float)((radius - radius_difference * (y + 1)) * sin(elevation_angle * (i + 1)));
+            //decrease of z
+
+            v_b_diff.x = (float)((radius - radius_difference * (y + 1)) * cos(elevation_angle * (i)));
+            //decrease of x
+            
+            v_b_diff.y = v_bx_by_bz.y + cone_height;
+            
+            v_b_diff.z = (float)((radius - radius_difference * (y + 1)) * sin(elevation_angle * (i)));
+            //decrease of z
+
+            C.addTriangle(v_ax_ay_az, v_b_diff, v_bx_by_bz);//side face
+            C.addTriangle(v_bx_by_bz, v_b_diff, v_a_diff);//side face
+
+            v_ax_ay_az.x = v_b_diff.x;
+            v_ax_ay_az.z = v_b_diff.z;
+
+            v_bx_by_bz.x = v_a_diff.x;
+            v_bx_by_bz.z = v_a_diff.z;
+        }
+
+        v_a.x = v_b.x;
+        v_a.z = v_b.z;
+
+    }
