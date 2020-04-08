@@ -1,0 +1,125 @@
+commit 9ed67cd7a506dd00e80230568ecaf005aacd62cf
+Author: rg1391 <rg1391@rit.edu>
+Date:   Wed Feb 26 22:31:45 2020 -0500
+
+    Final submitted code
+
+commit 3995d28731d0637b5506b505bc15edf296edd129
+Author: rg1391 <rg1391@rit.edu>
+Date:   Wed Feb 26 20:18:41 2020 -0500
+
+    New approach with segmentation fault
+
+commit 9707e106534b6a18a7d27d9a540c0ec459e519ee
+Author: rg1391 <rg1391@rit.edu>
+Date:   Wed Feb 26 19:46:32 2020 -0500
+
+    Totally different approach started
+
+commit 0610f9b43cc1e2662649c72c7dbdc00eede9cbb9
+Author: rg1391 <rg1391@rit.edu>
+Date:   Tue Feb 25 22:36:52 2020 -0500
+
+    Finally Something on screen
+
+commit 0263bdc1666446fd8e7e75e44eb8325b7c4ce635
+Author: rg1391 <rg1391@rit.edu>
+Date:   Tue Feb 25 19:21:16 2020 -0500
+
+    segmentation error
+
+commit ffb2804dea42ca189a098f751eb1605b0ad738d5
+Author: rg1391 <rg1391@rit.edu>
+Date:   Tue Feb 25 18:49:00 2020 -0500
+
+    trying pointers
+
+commit 640117bbbb9b3bdffb8b19b01648b0dc72ff2ae5
+Author: rg1391 <rg1391@rit.edu>
+Date:   Tue Feb 25 16:58:03 2020 -0500
+
+    Failed approach
+
+commit 070a73bc1fc7b1aeee70ca52749d73be48ccb010
+Author: rg1391 <rg1391@rit.edu>
+Date:   Tue Feb 25 01:42:12 2020 -0500
+
+    trying another approach
+
+commit d3f154d4c57479805d24f3bb0fece290d49681c4
+Author: rg1391 <rg1391@rit.edu>
+Date:   Mon Feb 24 23:34:38 2020 -0500
+
+    trying sorting
+
+commit 97ffa205b6977ac1db6bbc984971d657bb036255
+Author: rg1391 <rg1391@rit.edu>
+Date:   Mon Feb 24 21:59:01 2020 -0500
+
+    basic classes
+
+commit c677d4e0aa7ea006a597896214ed0b13dee8ee11
+Author: rg1391 <rg1391@rit.edu>
+Date:   Mon Feb 24 19:12:21 2020 -0500
+
+    lab2
+
+commit 6497edd93bfb0f7d01c62d4b6cd382a4530d3a05
+Author: rg1391 <rg1391@rit.edu>
+Date:   Tue Feb 11 20:34:34 2020 -0500
+
+    final code for submission
+
+commit a9e3846d00893cb9f0fe2d25222da609227b5c55
+Author: rg1391 <rg1391@rit.edu>
+Date:   Tue Feb 11 20:28:34 2020 -0500
+
+    final code for all cases with initials
+
+commit 0b37808e6f2e5c2496c52750416757477308e368
+Author: rg1391 <rg1391@rit.edu>
+Date:   Tue Feb 11 17:36:33 2020 -0500
+
+    New variation and new lines to try
+
+commit 8847f9fe6f1ce290212451be7e8c406942cf866c
+Author: rg1391 <rg1391@rit.edu>
+Date:   Mon Feb 10 01:38:23 2020 -0500
+
+    second trial for downward 45 degree not working
+
+commit fc2f11a0a7a083f9530a18e5a1ab301be8b27da6
+Author: rg1391 <rg1391@rit.edu>
+Date:   Mon Feb 3 17:12:55 2020 -0500
+
+    Plotting line by line now getting basic output
+
+commit f22b517cd02594e0fc3960c5122f05fc052e5d19
+Author: rg1391 <rg1391@rit.edu>
+Date:   Mon Feb 3 16:44:31 2020 -0500
+
+    Plot a few random points but no output
+
+commit f10b17fc63ffb4a9435ab3c55616be74693d806e
+Author: rg1391 <rg1391@rit.edu>
+Date:   Mon Feb 3 16:35:13 2020 -0500
+
+    Commit 2 trial
+
+commit e6c05f00edf0901c75b739c5900fce144f8be9b8
+Author: rg1391 <rg1391@rit.edu>
+Date:   Mon Feb 3 15:56:12 2020 -0500
+
+    first running code after solving set pixel error
+
+commit 20fcc288ed6ecb8f0cf3ffda43f2e6c63b2540d3
+Author: rg1391 <rg1391@rit.edu>
+Date:   Mon Feb 3 01:36:17 2020 -0500
+
+    initial commit
+
+commit f331450b4cb881ad437f97e03fee475fe578de20
+Author: rg1391 <54724152+rg1391@users.noreply.github.com>
+Date:   Mon Feb 3 01:20:39 2020 -0500
+
+    Initial commit
