@@ -1,4 +1,4 @@
-//
+﻿//
 //  Pipeline.cpp
 //
 //  Created by Warren R. Carithers on 2016/10/19.
@@ -35,6 +35,32 @@ Pipeline::Pipeline( int w, int h ) : Canvas(w,h)
     // YOUR IMPLEMENTATION HERE if you need to modify the constructor
 }
 
+
+//************ Defining all required global variables **********
+//Initial vertices of polygons
+Vertex initPolygons[1000][1000];
+
+//Vertices of polygons after clipping
+Vertex clippedPolygons[1000][1000];
+
+//Vertices of polygons after transformation
+Vertex transformedPolygons[1000][1000];
+
+//Store number of vertices of initial polygon
+int initNoOfVertices[1000];
+
+//Store number of vertices of clipped polygon
+int clippedNoOfVertices[1000];
+
+//Unique ID for the polygon
+static int currentID = 0;
+
+//Identity matrix
+float identityMatrix[3][3];
+
+
+
+
 ///
 // addPoly - Add a polygon to the canvas.  This method does not draw
 //           the polygon, but merely stores it for later drawing.
@@ -48,11 +74,18 @@ Pipeline::Pipeline( int w, int h ) : Canvas(w,h)
 // @return a unique integer identifier for the polygon
 ///
 int Pipeline::addPoly( const Vertex p[], int n )
-{
-    // YOUR IMPLEMENTATION HERE
+{   
+    initNoOfVertices[currentID] = n;
+    for (int i = 0; i < n; i++) {
+        // Add the vertices of the current polygon being added
+        initPolygons[currentID][i] = p[i];
+    }
+    std::cout << "added polygon: " << currentID<<std::endl;
+    //Update the id for next polygon
+    currentID+=1;
 
-    // REMEMBER TO RETURN A UNIQUE ID FOR THE POLYGON
-    return 0;
+    //return the id of added polygon
+    return currentID - 1;
 }
 
 ///
@@ -72,7 +105,20 @@ void Pipeline::drawPoly( int polyID )
 ///
 void Pipeline::clearTransform( void )
 {
-    // YOUR IMPLEMENTATION HERE
+    //Identity Matrix = {1 0 0
+    //                   0 1 0
+    //                   0 0 1}
+
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            if(i==j)
+                identityMatrix[i][j] = 1;
+            else
+                identityMatrix[i][j] = 0;
+        }
+    }
 }
 
 ///
