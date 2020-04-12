@@ -1,8 +1,14 @@
 ﻿  Clipper.cpp
-C:\Users\hp\Desktop\OpenGLProjects\Lab3\Lab3\Clipper.cpp(43,13): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\hp\Desktop\OpenGLProjects\Lab3\Lab3\Clipper.cpp(45,13): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\hp\Desktop\OpenGLProjects\Lab3\Lab3\Clipper.cpp(46,26): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\hp\Desktop\OpenGLProjects\Lab3\Lab3\Clipper.cpp(48,55): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\hp\Desktop\OpenGLProjects\Lab3\Lab3\Clipper.cpp(50,41): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\hp\Desktop\OpenGLProjects\Lab3\Lab3\Clipper.cpp(51,26): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  clipMain.cpp
+C:\Users\hp\Desktop\OpenGLProjects\Lab3\Lab3\clipMain.cpp(129,25): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\hp\Desktop\OpenGLProjects\Lab3\Lab3\clipMain.cpp(129,19): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\hp\Desktop\OpenGLProjects\Lab3\Lab3\clipMain.cpp(130,25): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\hp\Desktop\OpenGLProjects\Lab3\Lab3\clipMain.cpp(130,19): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\hp\Desktop\OpenGLProjects\Lab3\Lab3\clipMain.cpp(131,25): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\hp\Desktop\OpenGLProjects\Lab3\Lab3\clipMain.cpp(131,19): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\hp\Desktop\OpenGLProjects\Lab3\Lab3\clipMain.cpp(132,25): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\hp\Desktop\OpenGLProjects\Lab3\Lab3\clipMain.cpp(132,19): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\hp\Desktop\OpenGLProjects\Lab3\Lab3\clipMain.cpp(161,33): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\hp\Desktop\OpenGLProjects\Lab3\Lab3\clipMain.cpp(161,25): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  Generating Code...
   Lab3.vcxproj -> C:\Users\hp\Desktop\OpenGLProjects\Lab3\Debug\Lab3.exe
