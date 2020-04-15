@@ -117,6 +117,50 @@ public:
     ///
     void setViewport( int x, int y, int width, int height );
 
+    //**************************** LAB 2 - Draw Polygon ************************
+    /**
+      Initialize the edge table and active edge table
+
+      @param  edgeTable          The edge table to be initialized
+      @param  activeEdgeTable    The active edge table to be initialized
+    */
+    void initializeTables(int* edgeTable, int* activeEdgeTable);
+    
+    /**
+      Form the edge table and active edge table from the vertices
+
+      @param  x[]                The array of x value of all vertices
+      @param  y[]                The array of y value of all vertices
+      @param  activeEdgeTable    The active edge table to be formed
+      @param  edgeTable          The edge table to be formed
+      @param  activeEdgeTable    The active edge table to be formed
+*/
+    void formTables(int n, const int x[], const int y[], int* edgeTable, int* activeEdgeTable);
+    
+    /**
+   Form the edge table and active edge table entry for the value of vertex passed
+
+   @param  x1                x value of first vertex
+   @param  y1                y value of first vertex
+   @param  x2                x value of second vertex
+   @param  y2                y value of second vertex
+   @param  edgeTable         The edge table to be formed
+   @param  activeEdgeTable   The active edge table to be formed
+ */
+    void fillTable(float x1, float y1, float x2, float y2, int* edgeTable, int* activeEdgeTable);
+    
+    /**
+        Draw the polygon using the edge table and active edge table value
+
+        @param  edgeTable         The edge table of the polygon to be formed
+        @param  activeEdgeTable   The active edge table of the polygon to be formed
+    */
+    void drawFigure(int* edgeTable, int* activeEdgeTable);
+
+
+
+    //**************************** LAB 3 - Clipping ************************
+
 
     ///
     // inside

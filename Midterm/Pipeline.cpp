@@ -98,7 +98,33 @@ int Pipeline::addPoly( const Vertex p[], int n )
 ///
 void Pipeline::drawPoly( int polyID )
 {
-    // YOUR IMPLEMENTATION HERE
+    int edgeTable[1000], activeEdgeTable[1000];
+    
+    int n = clippedNoOfVertices[polyID];
+    int x[1000];
+    int y[1000];
+    
+    for (int i = 0; i < n; i++) {
+        // view port is the last transform 
+        // multiplied by current transform
+        Vertex tempVertex = transformedPolygons[polyID][i];
+        x[i] = (int)(identityMatrix[0][0] * tempVertex.x + identityMatrix[0][1] * tempVertex.y + identityMatrix[0][2] * 1);
+        y[i] = (int)(identityMatrix[1][0] * tempVertex.x + identityMatrix[1][1] * tempVertex.y + identityMatrix[1][2] * 1);
+    }
+    for (int i = 0; i < n; i++) {
+        x[i] = clippedPolygons[polyID][i].x;
+        y[i] = clippedPolygons[polyID][i].y;
+    }
+        //Initialize both tables
+        initializeTables(edgeTable, activeEdgeTable);
+
+        //For both tables with coordinates of vertices
+        formTables(n, x, y, edgeTable, activeEdgeTable);
+
+        //Draw polygon using both tables
+        drawFigure(edgeTable, activeEdgeTable);
+    
+    std::cout << "Drawn polygon: " << polyID << std::endl;
 }
 
 ///
@@ -133,7 +159,22 @@ void Pipeline::clearTransform( void )
 ///
 void Pipeline::translate( float tx, float ty )
 {
-    // YOUR IMPLEMENTATION HERE
+    //Translate(x, y) = {1 0 tx
+    //                   0 1 ty
+    //                   0 0  1}
+    identityMatrix[0][0] = 1 * identityMatrix[0][0] + 0 * identityMatrix[1][0] + tx * identityMatrix[2][0];
+    identityMatrix[0][1] = 1 * identityMatrix[0][1] + 0 * identityMatrix[1][1] + tx * identityMatrix[2][1];
+    identityMatrix[0][2] = 1 * identityMatrix[0][2] + 0 * identityMatrix[1][2] + tx * identityMatrix[2][2];
+
+    identityMatrix[1][0] = 0 * identityMatrix[0][0] + 1 * identityMatrix[1][0] + ty * identityMatrix[2][0];
+    identityMatrix[1][1] = 0 * identityMatrix[0][1] + 1 * identityMatrix[1][1] + ty * identityMatrix[2][1];
+    identityMatrix[1][2] = 0 * identityMatrix[0][2] + 1 * identityMatrix[1][2] + ty * identityMatrix[2][2];
+
+    identityMatrix[2][0] = 0 * identityMatrix[0][0] + 0 * identityMatrix[1][0] + 1 * identityMatrix[2][0];
+    identityMatrix[2][1] = 0 * identityMatrix[0][1] + 0 * identityMatrix[1][1] + 1 * identityMatrix[2][1];
+    identityMatrix[2][2] = 0 * identityMatrix[0][2] + 0 * identityMatrix[1][2] + 1 * identityMatrix[2][2];
+
+    std::cout << "\t\tTranslating polygon: " << tx << "," << ty << std::endl;
 }
 
 ///
@@ -145,7 +186,25 @@ void Pipeline::translate( float tx, float ty )
 ///
 void Pipeline::rotate( float degrees )
 {
-    // YOUR IMPLEMENTATION HERE
+    //R(rad) = { cos(rad) -sin(rad)     0
+    //           sin(rad)  cos(rad)     0
+    //              0          0        1}
+
+    //rad = degress * pi / 180
+    float rad = (degrees * 22) / (7*180);
+    identityMatrix[0][0] = cos(rad) * identityMatrix[0][0] + (-sin(rad) * identityMatrix[1][0]) + 0 * identityMatrix[2][0];
+    identityMatrix[0][1] = cos(rad) * identityMatrix[0][1] + (-sin(rad) * identityMatrix[1][1]) + 0 * identityMatrix[2][1];
+    identityMatrix[0][2] = cos(rad) * identityMatrix[0][2] + (-sin(rad) * identityMatrix[1][2]) + 0 * identityMatrix[2][2];
+
+    identityMatrix[1][0] = sin(rad) * identityMatrix[0][0] + cos(rad) * identityMatrix[1][0] + 0 * identityMatrix[2][0];
+    identityMatrix[1][1] = sin(rad) * identityMatrix[0][1] + cos(rad) * identityMatrix[1][1] + 0 * identityMatrix[2][1];
+    identityMatrix[1][2] = sin(rad) * identityMatrix[0][2] + cos(rad) * identityMatrix[1][2] + 0 * identityMatrix[2][2];
+
+    identityMatrix[2][0] = 0 * identityMatrix[0][0] + 0 * identityMatrix[1][0] + 1 * identityMatrix[2][0];
+    identityMatrix[2][1] = 0 * identityMatrix[0][1] + 0 * identityMatrix[1][1] + 1 * identityMatrix[2][1];
+    identityMatrix[2][2] = 0 * identityMatrix[0][2] + 0 * identityMatrix[1][2] + 1 * identityMatrix[2][2];
+
+    std::cout << "\t\tRotating polygon: " << degrees << "degrees -> " << rad << std::endl;
 }
 
 ///
@@ -158,7 +217,22 @@ void Pipeline::rotate( float degrees )
 ///
 void Pipeline::scale( float sx, float sy )
 {
-    // YOUR IMPLEMENTATION HERE
+    //S(x, y) = { sx 0  0
+    //            0  sy 0
+    //            0  0   1}
+    identityMatrix[0][0] = sx * identityMatrix[0][0] + 0 * identityMatrix[1][0] + 0 * identityMatrix[2][0];
+    identityMatrix[0][1] = sx * identityMatrix[0][1] + 0 * identityMatrix[1][1] + 0 * identityMatrix[2][1];
+    identityMatrix[0][2] = sx * identityMatrix[0][2] + 0 * identityMatrix[1][2] + 0 * identityMatrix[2][2];
+
+    identityMatrix[1][0] = 0 * identityMatrix[0][0] + sy * identityMatrix[1][0] + 0 * identityMatrix[2][0];
+    identityMatrix[1][1] = 0 * identityMatrix[0][1] + sy * identityMatrix[1][1] + 0 * identityMatrix[2][1];
+    identityMatrix[1][2] = 0 * identityMatrix[0][2] + sy * identityMatrix[1][2] + 0 * identityMatrix[2][2];
+
+    identityMatrix[2][0] = 0 * identityMatrix[0][0] + 0 * identityMatrix[1][0] + 1 * identityMatrix[2][0];
+    identityMatrix[2][1] = 0 * identityMatrix[0][1] + 0 * identityMatrix[1][1] + 1 * identityMatrix[2][1];
+    identityMatrix[2][2] = 0 * identityMatrix[0][2] + 0 * identityMatrix[1][2] + 1 * identityMatrix[2][2];
+
+    std::cout << "\t\tScaling polygon: " << sx << "," << sy << std::endl;
 }
 
 ///
@@ -186,13 +260,15 @@ void Pipeline::setClipWindow( float bottom, float top, float left, float right )
             // store the vertices after clipping
             clippedPolygons[i][j] = outV[j];
         }
-        std::cout << "\tClipped Polygon - " << i << std::endl;
+        std::cout << "\tClipped Polygon: " << i << std::endl;
     }
     //store the boundaries 
     oldBottom = bottom;
     oldTop = top;
     oldLeft = left;
     oldRight = right;
+
+    std::cout << "\tClip Window set..!!" <<std::endl;
 }
 
 ///
@@ -205,7 +281,132 @@ void Pipeline::setClipWindow( float bottom, float top, float left, float right )
 ///
 void Pipeline::setViewport( int x, int y, int width, int height )
 {
-    // YOUR IMPLEMENTATION HERE
+    // Here, we considering transforming
+    // directly from the clipwindow
+
+    // polygon matrix = {x
+    //                   y
+    //                   1}
+
+    // Transormation Matrix = {sx  0  tx
+    //                          0 sy  ty
+    //                          0  0  1}
+
+    
+    //set the value of sx = (xmax - xmin) / (right - left)
+    float sx = (x + width - x) / (oldRight - oldLeft);
+    
+    //set the value of sy = (ymax - ymin) / (top - bottom)
+    float sy = (y + height - y) / (oldTop - oldBottom);
+    
+    //set the value of tx = (right * xmin - left * xmax) / (right - left)
+    float tx = (oldRight * x - oldLeft * (width + x)) / (oldRight - oldLeft);
+    
+    //set the value of ty = (top * ymin - bottom * ymax) / (top - bottom)
+    float ty = (oldTop * y - oldBottom * (y + height)) / (oldTop - oldBottom);
+    
+    for (int i = 0; i < currentID; i++) {
+        for (int j = 0; j < clippedNoOfVertices[i]; j++) {
+            // set new vertices for the clipped polygon
+            //x_new = sx * x + 0 * y + tx * 1
+            transformedPolygons[i][j].x = sx * clippedPolygons[i][j].x + 0 * clippedPolygons[i][j].y + tx * 1;
+            //y_new = 0 * x + sy * y + ty * 1
+            transformedPolygons[i][j].y = 0 * clippedPolygons[i][j].x + sy * clippedPolygons[i][j].y + ty * 1;
+        }
+    }
+    std::cout << "\tSetting the viewport done..!!"<< std::endl;
+}
+
+
+//**************************** LAB 2 - Draw Polygon ************************
+ /**
+      Initialize the edge table and active edge table
+
+      @param  edgeTable          The edge table to be initialized
+      @param  activeEdgeTable    The active edge table to be initialized
+    */
+void Pipeline::initializeTables(int* edgeTable, int* activeEdgeTable) {
+   
+    for (int i = 0; i < 900; i++) {
+        edgeTable[i] = 900;
+        activeEdgeTable[i] = 0;
+    }
+}
+
+/**
+      Form the edge table and active edge table from the vertices
+
+      @param  x[]                The array of x value of all vertices
+      @param  y[]                The array of y value of all vertices
+      @param  activeEdgeTable    The active edge table to be formed
+      @param  edgeTable          The edge table to be formed
+      @param  activeEdgeTable    The active edge table to be formed
+*/
+void Pipeline::formTables(int n, const int x[], const int y[], int* edgeTable, int* activeEdgeTable) {
+    for (int i = 1; i < n; i++) {
+        fillTable(x[i - 1], y[i - 1], x[i], y[i], edgeTable, activeEdgeTable);
+    }
+    fillTable(x[0], y[0], x[n - 1], y[n - 1], edgeTable, activeEdgeTable);
+
+}
+
+/**
+   Form the edge table and active edge table entry for the value of vertex passed
+
+   @param  x1                x value of first vertex
+   @param  y1                y value of first vertex
+   @param  x2                x value of second vertex
+   @param  y2                y value of second vertex
+   @param  edgeTable         The edge table to be formed
+   @param  activeEdgeTable   The active edge table to be formed
+ */
+void Pipeline::fillTable(float x1, float y1, float x2, float y2, int* edgeTable, int* activeEdgeTable) {
+    float xTemp, yTemp, x, slopeInverse;
+    // Swap vertices according to y value
+    if (y1 > y2) {
+        xTemp = x1;
+        x1 = x2;
+        x2 = xTemp;
+        yTemp = y1;
+        y1 = y2;
+        y2 = yTemp;
+    }
+    // if slop=0
+    if (y1 == y2) {
+        slopeInverse = x2 - x1;
+    }
+    else {
+        // regular slope inverse
+        slopeInverse = float((x2 - x1) / (y2 - y1));
+    }
+    x = x1;
+    // Add entries to both tables
+    for (int i = y1; i <= y2; i++) {
+        if (x < edgeTable[i]) {
+            edgeTable[i] = (int)x;
+        }
+        if (x > activeEdgeTable[i]) {
+            activeEdgeTable[i] = (int)x;
+        }
+        x += slopeInverse;
+    }
+}
+
+/**
+  Draw the polygon using the edge table and active edge table value
+
+  @param  edgeTable         The edge table of the polygon to be formed
+  @param  activeEdgeTable   The active edge table of the polygon to be formed
+*/
+void Pipeline::drawFigure(int* edgeTable, int* activeEdgeTable) {
+
+    for (int i = 1; i < 900; i++) {
+        if (edgeTable[i] <= activeEdgeTable[i]) {
+            for (int j = edgeTable[i]; j <= activeEdgeTable[i]; j++) {
+                setPixel(j, i);
+            }
+        }
+    }
 }
 
 
