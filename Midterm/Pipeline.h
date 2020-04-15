@@ -5,7 +5,7 @@
 //  Based on a version created by Joe Geigel on 11/30/11.
 //  Copyright 2016 Rochester Institute of Technology. All rights reserved.
 //
-//  Contributor:  YOUR_NAME_HERE
+//  Contributor:  Rahul Golhar
 //
 
 #ifndef _PIPELINE_H_
