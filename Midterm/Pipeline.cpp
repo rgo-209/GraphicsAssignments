@@ -111,10 +111,6 @@ void Pipeline::drawPoly( int polyID )
         x[i] = (int)(identityMatrix[0][0] * tempVertex.x + identityMatrix[0][1] * tempVertex.y + identityMatrix[0][2] * 1);
         y[i] = (int)(identityMatrix[1][0] * tempVertex.x + identityMatrix[1][1] * tempVertex.y + identityMatrix[1][2] * 1);
     }
-    for (int i = 0; i < n; i++) {
-        x[i] = clippedPolygons[polyID][i].x;
-        y[i] = clippedPolygons[polyID][i].y;
-    }
         //Initialize both tables
         initializeTables(edgeTable, activeEdgeTable);
 
