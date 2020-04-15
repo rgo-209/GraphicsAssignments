@@ -323,8 +323,8 @@ void Pipeline::setViewport( int x, int y, int width, int height )
     */
 void Pipeline::initializeTables(int* edgeTable, int* activeEdgeTable) {
    
-    for (int i = 0; i < 900; i++) {
-        edgeTable[i] = 900;
+    for (int i = 0; i < 1000; i++) {
+        edgeTable[i] = 1000;
         activeEdgeTable[i] = 0;
     }
 }
@@ -340,6 +340,7 @@ void Pipeline::initializeTables(int* edgeTable, int* activeEdgeTable) {
 */
 void Pipeline::formTables(int n, const int x[], const int y[], int* edgeTable, int* activeEdgeTable) {
     for (int i = 1; i < n; i++) {
+        std::cout << "\t\t\t\t\t"<< x[i - 1]<<", "<< y[i - 1]<<" -> "<< x[i]<<", " << y[i] <<std::endl;
         fillTable(x[i - 1], y[i - 1], x[i], y[i], edgeTable, activeEdgeTable);
     }
     fillTable(x[0], y[0], x[n - 1], y[n - 1], edgeTable, activeEdgeTable);
@@ -396,7 +397,7 @@ void Pipeline::fillTable(float x1, float y1, float x2, float y2, int* edgeTable,
 */
 void Pipeline::drawFigure(int* edgeTable, int* activeEdgeTable) {
 
-    for (int i = 1; i < 900; i++) {
+    for (int i = 1; i < 1000; i++) {
         if (edgeTable[i] <= activeEdgeTable[i]) {
             for (int j = edgeTable[i]; j <= activeEdgeTable[i]; j++) {
                 setPixel(j, i);
