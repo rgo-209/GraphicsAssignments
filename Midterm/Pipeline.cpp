@@ -9,6 +9,7 @@
 //
 
 #include <iostream>
+#include <algorithm> 
 
 #include "Pipeline.h"
 
@@ -81,13 +82,24 @@ int Pipeline::addPoly(const Vertex p[], int n)
         // Add the vertices of the current polygon being added
         initPolygons[currentID][i] = p[i];
     }
-    std::cout << "Added polygon: " << currentID << std::endl;
+    //std::cout << "Added polygon: " << currentID << std::endl;
     //Update the id for next polygon
     currentID += 1;
 
     //return the id of added polygon
     return currentID - 1;
 }
+
+struct EdgeBucket {
+    //ymax
+    int y;
+    //x value of the vertex with the ymin
+    float x;
+    //the slope inverse
+    float m;
+    //pointer to next bucket
+    EdgeBucket* nextBucket = NULL;
+};
 
 ///
 // drawPoly - Draw the polygon with the given id.  The polygon should
@@ -98,11 +110,10 @@ int Pipeline::addPoly(const Vertex p[], int n)
 ///
 void Pipeline::drawPoly(int polyID)
 {
-    int edgeTable[1000], activeEdgeTable[1000];
-
     int n = clippedNoOfVertices[polyID];
     int x[1000];
     int y[1000];
+    int yMin = 99999999, yMax = -99999999;
 
     for (int i = 0; i < n; i++) {
         // view port is the last transform 
@@ -111,69 +122,215 @@ void Pipeline::drawPoly(int polyID)
         x[i] = (int)(identityMatrix[0][0] * tempVertex.x + identityMatrix[0][1] * tempVertex.y + identityMatrix[0][2] * 1);
         y[i] = (int)(identityMatrix[1][0] * tempVertex.x + identityMatrix[1][1] * tempVertex.y + identityMatrix[1][2] * 1);
     }
-    //Initialize both tables
-    //initializeTables(edgeTable, activeEdgeTable);
-    for (int i = 0; i < 1000; i++) {
-        edgeTable[i] = 1000;
-        activeEdgeTable[i] = 0;
-    }
-    //For both tables with coordinates of vertices
-    //formTables(n, x, y, edgeTable, activeEdgeTable);
+    
+    //**************************** LAB 2 - Draw Polygon ************************
+
+    // Find the yMax and yMin for the current polygon
     for (int i = 0; i < n; i++) {
-        int j = (i + 1) % n;
-        std::cout << "\t\t\t\t\t" << x[i] << ", " << y[i] << " -> " << x[j] << ", " << y[j] << std::endl;
-        //fillTable(x[i], y[i], x[j], y[j], edgeTable, activeEdgeTable);
-        float x1, y1, x2, y2;
-        x1 = x[i];
-        y1 = y[i];
-        x2 = x[j];
-        y2 = y[j];
-        float xTemp, yTemp, x, slopeInverse;
-        // Swap vertices according to y value
-        if (y1 > y2) {
-            xTemp = x1;
-            x1 = x2;
-            x2 = xTemp;
-            yTemp = y1;
-            y1 = y2;
-            y2 = yTemp;
+        if (y[i] > yMax) {
+            yMax = y[i];
         }
-        // if slop=0
-        if (y1 == y2) {
-            slopeInverse = x2 - x1;
-        }
-        else {
-            // regular slope inverse
-            slopeInverse = float((x2 - x1) / (y2 - y1));
-        }
-        x = x1;
-        // Add entries to both tables
-        for (int i = y1; i <= y2; i++) {
-            if (x < edgeTable[i]) {
-                edgeTable[i] = (int)x;
-            }
-            if (x > activeEdgeTable[i]) {
-                activeEdgeTable[i] = (int)x;
-            }
-            x += slopeInverse;
+        if (y[i] < yMin) {
+            yMin = y[i];
         }
     }
 
-    //Draw polygon using both tables
-    //drawFigure(edgeTable, activeEdgeTable);
-    for (int i = 1; i < 1000; i++) {
-        if (edgeTable[i] <= activeEdgeTable[i]) {
-            for (int j = edgeTable[i]; j <= activeEdgeTable[i]; j++) {
-                setPixel(j, i);
+    // Edge table to be used
+    EdgeBucket* edgeTable[1000];
+
+    //Initialize edge table
+    for (int i = yMin; i <= yMax; i++) {
+        edgeTable[i] = new EdgeBucket;
+        edgeTable[i]->nextBucket = NULL;
+    }
+    
+    //Form the edge table with coordinates of vertices
+    for (int i = 0; i < n; i++) {
+        if (i != n - 1) {
+
+            if (y[i] != y[i + 1]) {
+            // if the edge is not horizontal
+            // transfer co-ordinates
+
+                // yMin value of current bucket
+                int currBucketYmin;
+                // yMax value of current bucket
+                int currBucketYmax;
+                // x value of current bucket
+                float currBucketX;
+                // m value of current bucket
+                float currBucketM;
+
+                // Update values based on slope of the line
+                currBucketM = (float)(x[i + 1] - x[i]) / (float)(y[i + 1] - y[i]);
+                currBucketYmax = (y[i] > y[i + 1]) ? y[i] : y[i + 1];
+                currBucketYmin = (y[i] <= y[i + 1]) ? y[i] : y[i + 1];
+                currBucketX = (y[i] > y[i + 1]) ? x[i+1] : x[i];
+
+                EdgeBucket* edgeBucket = new EdgeBucket;
+                edgeBucket->y = currBucketYmax;
+                edgeBucket->x = currBucketX;
+                edgeBucket->m = currBucketM;
+
+                if (edgeTable[currBucketYmin]->nextBucket == NULL) {
+                    edgeTable[currBucketYmin]->nextBucket = edgeBucket;
+                }
+                else {
+                    EdgeBucket* temp = edgeTable[currBucketYmin]->nextBucket;
+                    edgeBucket->nextBucket = temp;
+                    edgeTable[currBucketYmin]->nextBucket = edgeBucket;
+                }
+            }
+            else{
+            // if the edge is horizontal
+            // do not transfer co-ordinates
+            // but draw the line
+
+                // Temporary variables for
+                // maximum and minimum x
+                int xMax, xMin; 
+
+                xMax = (x[i] > x[i+1]) ? x[i] : x[i+1];
+                xMin = (x[i] <= x[i+1]) ? x[i] : x[i + 1];
+
+                for (int j = xMin; j <= xMax; j++) {
+                    setPixel(j, y[i]);
+                }
+            }
+
+        }
+        else {
+        //for the last edge
+            
+            // yMin value of current bucket
+            int currBucketYmin;
+            // yMax value of current bucket
+            int currBucketYmax;
+            // x value of current bucket
+            float currBucketX;
+            // m value of current bucket
+            float currBucketM;
+            // Temporary variables for
+            // maximum and minimum x
+            int xMax, xMin;
+
+            if (y[n - 1] == y[0]) {
+                
+                xMax = (x[n - 1] > x[0]) ? x[n - 1] : x[0];
+                xMin = (x[n - 1] <= x[0]) ? x[n - 1] : x[0];
+
+                for (int j = xMin; j <= xMax; j++) {
+                    setPixel(j, y[0]);
+                }
+            }
+            else {
+
+                // yMin value of current bucket
+                int currBucketYmin;
+                // yMax value of current bucket
+                int currBucketYmax;
+                // x value of current bucket
+                float currBucketX;
+                // m value of current bucket
+                float currBucketM;
+
+                // Used as a temporary bucket
+                EdgeBucket* edgeBucket = new EdgeBucket;
+
+                currBucketM = (float)(x[0] - x[n - 1]) / (float)(y[0] - y[n - 1]);
+                currBucketYmax = (y[n - 1] > y[0]) ? y[n - 1] : y[0];
+                currBucketYmin = (y[n - 1] <= y[0]) ? y[n - 1] : y[0];
+                currBucketX = (y[n - 1] > y[0]) ? x[0] : x[n - 1];
+
+                edgeBucket->y = currBucketYmax;
+                edgeBucket->x = currBucketX;
+                edgeBucket->m = currBucketM;
+                if (edgeTable[currBucketYmin]->nextBucket == NULL) {
+                    edgeTable[currBucketYmin]->nextBucket = edgeBucket;
+                }
+                else {
+                    EdgeBucket* tempBucket = edgeTable[currBucketYmin]->nextBucket;
+                    edgeBucket->nextBucket = tempBucket;
+                    edgeTable[currBucketYmin]->nextBucket = edgeBucket;
+                }
             }
         }
     }
-    std::cout << "Drawn polygon: " << polyID << std::endl;
-    clearTransform();
-    for (int i = 0; i < 1000; i++) {
-        edgeTable[i] = 1000;
-        activeEdgeTable[i] = 0;
+
+    //Form the active edge table using edge table
+    EdgeBucket* activeEdgeTable = new EdgeBucket;
+
+    // Initialize active edge table
+    activeEdgeTable->nextBucket = NULL;
+
+    for (int i = yMin; i <= yMax; i++) {
+        // let i be the 1st non-empty bucket list
+        // and edge table is not empty
+
+        // Remove buckets with y = ymax
+        EdgeBucket* tempActiveEdgeTable = activeEdgeTable;
+        EdgeBucket* edgeBucket = tempActiveEdgeTable->nextBucket;
+        while (edgeBucket) {
+            if (edgeBucket->y == i) {
+                // Remove bucket
+                tempActiveEdgeTable->nextBucket = edgeBucket->nextBucket;
+                edgeBucket = tempActiveEdgeTable->nextBucket;
+            }
+            else {
+                // Keep bucket
+                tempActiveEdgeTable = tempActiveEdgeTable->nextBucket;
+                edgeBucket = tempActiveEdgeTable->nextBucket;
+            }
+        }        
+
+        // Insert the buckets from edge table into active edge table        
+        EdgeBucket *tempEdgeTable = edgeTable[i]->nextBucket;
+        EdgeBucket *tempInsertActiveEdgeTable = activeEdgeTable;
+        
+        while (tempEdgeTable) {
+            while (tempInsertActiveEdgeTable->nextBucket && tempEdgeTable->x > tempInsertActiveEdgeTable->nextBucket->x) {
+                tempInsertActiveEdgeTable = tempInsertActiveEdgeTable->nextBucket;            
+            }
+
+            EdgeBucket* tempEdge = tempEdgeTable->nextBucket;
+            
+            tempEdgeTable->nextBucket = tempInsertActiveEdgeTable->nextBucket;
+            tempInsertActiveEdgeTable->nextBucket = tempEdgeTable;
+            tempEdgeTable = tempEdge;
+            tempInsertActiveEdgeTable = activeEdgeTable;
+        }
+
+        // Plot points on scan line y
+        // using active edge table
+        EdgeBucket* tempPlotActiveEdgeTable = activeEdgeTable->nextBucket;
+
+        // Temporary variables for
+        // maximum and minimum x
+        int xMax, xMin;
+
+        while (tempPlotActiveEdgeTable && tempPlotActiveEdgeTable->nextBucket) {
+            
+            xMax = (tempPlotActiveEdgeTable->x > tempPlotActiveEdgeTable->nextBucket->x) ?
+                tempPlotActiveEdgeTable->x : tempPlotActiveEdgeTable->nextBucket->x;
+            
+            xMin = (tempPlotActiveEdgeTable->x <= tempPlotActiveEdgeTable->nextBucket->x) ?
+                tempPlotActiveEdgeTable->x : tempPlotActiveEdgeTable->nextBucket->x;
+
+            for (int j = xMin; j <= xMax; j++) {
+                setPixel(j, i);
+            }
+            // Move to next bucket
+            tempPlotActiveEdgeTable = tempPlotActiveEdgeTable->nextBucket->nextBucket;
+        }
+
+        // For non vertical edge in active list
+        EdgeBucket* nonVertEdge = activeEdgeTable->nextBucket;
+        while (nonVertEdge) {
+            nonVertEdge->x += nonVertEdge->m;
+            nonVertEdge = nonVertEdge->nextBucket;
+        }
     }
+
 }
 
 ///
@@ -195,7 +352,7 @@ void Pipeline::clearTransform(void)
                 identityMatrix[i][j] = 0;
         }
     }
-    std::cout << "\tCleared Identity Matrix..!!" << std::endl;
+    //std::cout << "\tCleared Identity Matrix..!!" << std::endl;
 }
 
 ///
@@ -223,7 +380,7 @@ void Pipeline::translate(float tx, float ty)
     identityMatrix[2][1] = 0 * identityMatrix[0][1] + 0 * identityMatrix[1][1] + 1 * identityMatrix[2][1];
     identityMatrix[2][2] = 0 * identityMatrix[0][2] + 0 * identityMatrix[1][2] + 1 * identityMatrix[2][2];
 
-    std::cout << "\t\tTranslating polygon: " << tx << "," << ty << std::endl;
+    //std::cout << "\t\tTranslating polygon: " << tx << "," << ty << std::endl;
 }
 
 ///
@@ -253,7 +410,7 @@ void Pipeline::rotate(float degrees)
     identityMatrix[2][1] = 0 * identityMatrix[0][1] + 0 * identityMatrix[1][1] + 1 * identityMatrix[2][1];
     identityMatrix[2][2] = 0 * identityMatrix[0][2] + 0 * identityMatrix[1][2] + 1 * identityMatrix[2][2];
 
-    std::cout << "\t\tRotating polygon: " << degrees << "degrees -> " << rad << std::endl;
+    //std::cout << "\t\tRotating polygon: " << degrees << "degrees -> " << rad << std::endl;
 }
 
 ///
@@ -281,7 +438,7 @@ void Pipeline::scale(float sx, float sy)
     identityMatrix[2][1] = 0 * identityMatrix[0][1] + 0 * identityMatrix[1][1] + 1 * identityMatrix[2][1];
     identityMatrix[2][2] = 0 * identityMatrix[0][2] + 0 * identityMatrix[1][2] + 1 * identityMatrix[2][2];
 
-    std::cout << "\t\tScaling polygon: " << sx << "," << sy << std::endl;
+    //std::cout << "\t\tScaling polygon: " << sx << "," << sy << std::endl;
 }
 
 ///
@@ -304,12 +461,15 @@ void Pipeline::setClipWindow(float bottom, float top, float left, float right)
     for (int i = 0; i < currentID; i++) {
         Vertex outV[1000];
         int in = initNoOfVertices[i];
+
+        // clip current polygon
         clippedNoOfVertices[i] = clipPolygon(in, initPolygons[i], outV, ll, ur);
+        
         for (int j = 0; j < clippedNoOfVertices[i]; j++) {
             // store the vertices after clipping
             clippedPolygons[i][j] = outV[j];
         }
-        std::cout << "\tClipped Polygon: " << i << std::endl;
+        //std::cout << "\tClipped Polygon: " << i << std::endl;
     }
     //store the boundaries 
     oldBottom = bottom;
@@ -317,7 +477,7 @@ void Pipeline::setClipWindow(float bottom, float top, float left, float right)
     oldLeft = left;
     oldRight = right;
 
-    std::cout << "\tClip Window set..!!" << std::endl;
+    //std::cout << "\tClip Window set..!!" << std::endl;
 }
 
 ///
@@ -363,114 +523,21 @@ void Pipeline::setViewport(int x, int y, int width, int height)
             transformedPolygons[i][j].y = 0 * clippedPolygons[i][j].x + sy * clippedPolygons[i][j].y + ty * 1;
         }
     }
-    std::cout << "\tSetting the viewport done..!!" << std::endl;
+    //std::cout << "\tSetting the viewport done..!!" << std::endl;
 }
-
-
-//**************************** LAB 2 - Draw Polygon ************************
- /**
-      Initialize the edge table and active edge table
-
-      @param  edgeTable          The edge table to be initialized
-      @param  activeEdgeTable    The active edge table to be initialized
-    */
-void Pipeline::initializeTables(int* edgeTable, int* activeEdgeTable) {
-
-    for (int i = 0; i < 1000; i++) {
-        edgeTable[i] = 1000;
-        activeEdgeTable[i] = 0;
-    }
-}
-
-/**
-      Form the edge table and active edge table from the vertices
-
-      @param  x[]                The array of x value of all vertices
-      @param  y[]                The array of y value of all vertices
-      @param  activeEdgeTable    The active edge table to be formed
-      @param  edgeTable          The edge table to be formed
-      @param  activeEdgeTable    The active edge table to be formed
-*/
-void Pipeline::formTables(int n, const int x[], const int y[], int* edgeTable, int* activeEdgeTable) {
-    for (int i = 1; i < n; i++) {
-        std::cout << "\t\t\t\t\t" << x[i - 1] << ", " << y[i - 1] << " -> " << x[i] << ", " << y[i] << std::endl;
-        fillTable(x[i - 1], y[i - 1], x[i], y[i], edgeTable, activeEdgeTable);
-    }
-    fillTable(x[0], y[0], x[n - 1], y[n - 1], edgeTable, activeEdgeTable);
-
-}
-
-/**
-   Form the edge table and active edge table entry for the value of vertex passed
-
-   @param  x1                x value of first vertex
-   @param  y1                y value of first vertex
-   @param  x2                x value of second vertex
-   @param  y2                y value of second vertex
-   @param  edgeTable         The edge table to be formed
-   @param  activeEdgeTable   The active edge table to be formed
- */
-void Pipeline::fillTable(float x1, float y1, float x2, float y2, int* edgeTable, int* activeEdgeTable) {
-    float xTemp, yTemp, x, slopeInverse;
-    // Swap vertices according to y value
-    if (y1 > y2) {
-        xTemp = x1;
-        x1 = x2;
-        x2 = xTemp;
-        yTemp = y1;
-        y1 = y2;
-        y2 = yTemp;
-    }
-    // if slop=0
-    if (y1 == y2) {
-        slopeInverse = x2 - x1;
-    }
-    else {
-        // regular slope inverse
-        slopeInverse = float((x2 - x1) / (y2 - y1));
-    }
-    x = x1;
-    // Add entries to both tables
-    for (int i = y1; i <= y2; i++) {
-        if (x < edgeTable[i]) {
-            edgeTable[i] = (int)x;
-        }
-        if (x > activeEdgeTable[i]) {
-            activeEdgeTable[i] = (int)x;
-        }
-        x += slopeInverse;
-    }
-}
-
-/**
-  Draw the polygon using the edge table and active edge table value
-
-  @param  edgeTable         The edge table of the polygon to be formed
-  @param  activeEdgeTable   The active edge table of the polygon to be formed
-*/
-void Pipeline::drawFigure(int* edgeTable, int* activeEdgeTable) {
-
-    for (int i = 1; i < 1000; i++) {
-        if (edgeTable[i] <= activeEdgeTable[i]) {
-            for (int j = edgeTable[i]; j <= activeEdgeTable[i]; j++) {
-                setPixel(j, i);
-            }
-        }
-    }
-}
-
-
 
 
 //**************************** LAB 3 - Clipping ************************
 ///
 // inside
 //
-// Checks if the vertex is inside the polygon w.r.t. the endpoints of the current edge used for clipping.
+// Checks if the vertex is inside the polygon w.r.t. 
+// the endpoints of the current edge used for clipping.
 //
+// @param v     the vertex to check for
 // @param v1    the first vertex
 // @param v2    the second vertex
-// @param v     the vertex to check for
+// @param side  the side to check for
 //
 // @return true if vertex is inside the polygon
 //
