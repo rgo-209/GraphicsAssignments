@@ -1,0 +1,13 @@
+﻿  Buffers.cpp
+  Pipeline.cpp
+C:\Users\hp\Desktop\OpenGLProjects\Midterm\Midterm\Pipeline.cpp(168,37): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\hp\Desktop\OpenGLProjects\Midterm\Midterm\Pipeline.cpp(243,41): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\hp\Desktop\OpenGLProjects\Midterm\Midterm\Pipeline.cpp(313,48): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\hp\Desktop\OpenGLProjects\Midterm\Midterm\Pipeline.cpp(316,48): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\hp\Desktop\OpenGLProjects\Midterm\Midterm\Pipeline.cpp(210,19): warning C4101: 'currBucketX': unreferenced local variable
+C:\Users\hp\Desktop\OpenGLProjects\Midterm\Midterm\Pipeline.cpp(206,17): warning C4101: 'currBucketYmin': unreferenced local variable
+C:\Users\hp\Desktop\OpenGLProjects\Midterm\Midterm\Pipeline.cpp(212,19): warning C4101: 'currBucketM': unreferenced local variable
+C:\Users\hp\Desktop\OpenGLProjects\Midterm\Midterm\Pipeline.cpp(208,17): warning C4101: 'currBucketYmax': unreferenced local variable
+  midtermMain.cpp
+  Generating Code...
+  Midterm.vcxproj -> C:\Users\hp\Desktop\OpenGLProjects\Midterm\Debug\Midterm.exe
