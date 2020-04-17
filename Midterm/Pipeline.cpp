@@ -29,8 +29,8 @@
 // @param w width of canvas
 // @param h height of canvas
 ///
-Pipeline::Pipeline( int w, int h ) : Canvas(w,h)
-    // YOUR IMPLEMENTATION HERE if you need to add initializers
+Pipeline::Pipeline(int w, int h) : Canvas(w, h)
+// YOUR IMPLEMENTATION HERE if you need to add initializers
 {
     // YOUR IMPLEMENTATION HERE if you need to modify the constructor
 }
@@ -74,16 +74,16 @@ float oldBottom, oldTop, oldLeft, oldRight;
 //
 // @return a unique integer identifier for the polygon
 ///
-int Pipeline::addPoly( const Vertex p[], int n )
-{   
+int Pipeline::addPoly(const Vertex p[], int n)
+{
     initNoOfVertices[currentID] = n;
     for (int i = 0; i < n; i++) {
         // Add the vertices of the current polygon being added
         initPolygons[currentID][i] = p[i];
     }
-    std::cout << "Added polygon: " << currentID<<std::endl;
+    std::cout << "Added polygon: " << currentID << std::endl;
     //Update the id for next polygon
-    currentID+=1;
+    currentID += 1;
 
     //return the id of added polygon
     return currentID - 1;
@@ -96,14 +96,14 @@ int Pipeline::addPoly( const Vertex p[], int n )
 //
 // @param polyID - the ID of the polygon to be drawn.
 ///
-void Pipeline::drawPoly( int polyID )
+void Pipeline::drawPoly(int polyID)
 {
     int edgeTable[1000], activeEdgeTable[1000];
-    
+
     int n = clippedNoOfVertices[polyID];
     int x[1000];
     int y[1000];
-    
+
     for (int i = 0; i < n; i++) {
         // view port is the last transform 
         // multiplied by current transform
@@ -111,22 +111,75 @@ void Pipeline::drawPoly( int polyID )
         x[i] = (int)(identityMatrix[0][0] * tempVertex.x + identityMatrix[0][1] * tempVertex.y + identityMatrix[0][2] * 1);
         y[i] = (int)(identityMatrix[1][0] * tempVertex.x + identityMatrix[1][1] * tempVertex.y + identityMatrix[1][2] * 1);
     }
-        //Initialize both tables
-        initializeTables(edgeTable, activeEdgeTable);
+    //Initialize both tables
+    //initializeTables(edgeTable, activeEdgeTable);
+    for (int i = 0; i < 1000; i++) {
+        edgeTable[i] = 1000;
+        activeEdgeTable[i] = 0;
+    }
+    //For both tables with coordinates of vertices
+    //formTables(n, x, y, edgeTable, activeEdgeTable);
+    for (int i = 0; i < n; i++) {
+        int j = (i + 1) % n;
+        std::cout << "\t\t\t\t\t" << x[i] << ", " << y[i] << " -> " << x[j] << ", " << y[j] << std::endl;
+        //fillTable(x[i], y[i], x[j], y[j], edgeTable, activeEdgeTable);
+        float x1, y1, x2, y2;
+        x1 = x[i];
+        y1 = y[i];
+        x2 = x[j];
+        y2 = y[j];
+        float xTemp, yTemp, x, slopeInverse;
+        // Swap vertices according to y value
+        if (y1 > y2) {
+            xTemp = x1;
+            x1 = x2;
+            x2 = xTemp;
+            yTemp = y1;
+            y1 = y2;
+            y2 = yTemp;
+        }
+        // if slop=0
+        if (y1 == y2) {
+            slopeInverse = x2 - x1;
+        }
+        else {
+            // regular slope inverse
+            slopeInverse = float((x2 - x1) / (y2 - y1));
+        }
+        x = x1;
+        // Add entries to both tables
+        for (int i = y1; i <= y2; i++) {
+            if (x < edgeTable[i]) {
+                edgeTable[i] = (int)x;
+            }
+            if (x > activeEdgeTable[i]) {
+                activeEdgeTable[i] = (int)x;
+            }
+            x += slopeInverse;
+        }
+    }
 
-        //For both tables with coordinates of vertices
-        formTables(n, x, y, edgeTable, activeEdgeTable);
-
-        //Draw polygon using both tables
-        drawFigure(edgeTable, activeEdgeTable);
-    
+    //Draw polygon using both tables
+    //drawFigure(edgeTable, activeEdgeTable);
+    for (int i = 1; i < 1000; i++) {
+        if (edgeTable[i] <= activeEdgeTable[i]) {
+            for (int j = edgeTable[i]; j <= activeEdgeTable[i]; j++) {
+                setPixel(j, i);
+            }
+        }
+    }
     std::cout << "Drawn polygon: " << polyID << std::endl;
+    clearTransform();
+    for (int i = 0; i < 1000; i++) {
+        edgeTable[i] = 1000;
+        activeEdgeTable[i] = 0;
+    }
 }
 
 ///
 // clearTransform - Set the current transformation to the identity matrix.
 ///
-void Pipeline::clearTransform( void )
+void Pipeline::clearTransform(void)
 {
     //Identity Matrix = {1 0 0
     //                   0 1 0
@@ -136,7 +189,7 @@ void Pipeline::clearTransform( void )
     {
         for (int j = 0; j < 3; j++)
         {
-            if(i==j)
+            if (i == j)
                 identityMatrix[i][j] = 1;
             else
                 identityMatrix[i][j] = 0;
@@ -153,7 +206,7 @@ void Pipeline::clearTransform( void )
 // @param x - Amount of translation in x.
 // @param y - Amount of translation in y.
 ///
-void Pipeline::translate( float tx, float ty )
+void Pipeline::translate(float tx, float ty)
 {
     //Translate(x, y) = {1 0 tx
     //                   0 1 ty
@@ -180,14 +233,14 @@ void Pipeline::translate( float tx, float ty )
 //
 // @param degrees - Amount of rotation in degrees.
 ///
-void Pipeline::rotate( float degrees )
+void Pipeline::rotate(float degrees)
 {
     //R(rad) = { cos(rad) -sin(rad)     0
     //           sin(rad)  cos(rad)     0
     //              0          0        1}
 
     //rad = degress * pi / 180
-    float rad = (degrees * 22) / (7*180);
+    float rad = (degrees * 22) / (7 * 180);
     identityMatrix[0][0] = cos(rad) * identityMatrix[0][0] + (-sin(rad) * identityMatrix[1][0]) + 0 * identityMatrix[2][0];
     identityMatrix[0][1] = cos(rad) * identityMatrix[0][1] + (-sin(rad) * identityMatrix[1][1]) + 0 * identityMatrix[2][1];
     identityMatrix[0][2] = cos(rad) * identityMatrix[0][2] + (-sin(rad) * identityMatrix[1][2]) + 0 * identityMatrix[2][2];
@@ -211,7 +264,7 @@ void Pipeline::rotate( float degrees )
 // @param x - Amount of scaling in x.
 // @param y - Amount of scaling in y.
 ///
-void Pipeline::scale( float sx, float sy )
+void Pipeline::scale(float sx, float sy)
 {
     //S(x, y) = { sx 0  0
     //            0  sy 0
@@ -239,15 +292,15 @@ void Pipeline::scale( float sx, float sy )
 // @param left - x coord of left edge of clip window (in world coords)
 // @param right - x coord of right edge of clip window (in world coords)
 ///
-void Pipeline::setClipWindow( float bottom, float top, float left, float right )
+void Pipeline::setClipWindow(float bottom, float top, float left, float right)
 {
     Vertex ll, ur;
     ll.x = left;
     ll.y = bottom;
- 
+
     ur.x = right;
     ur.y = top;
-    
+
     for (int i = 0; i < currentID; i++) {
         Vertex outV[1000];
         int in = initNoOfVertices[i];
@@ -264,7 +317,7 @@ void Pipeline::setClipWindow( float bottom, float top, float left, float right )
     oldLeft = left;
     oldRight = right;
 
-    std::cout << "\tClip Window set..!!" <<std::endl;
+    std::cout << "\tClip Window set..!!" << std::endl;
 }
 
 ///
@@ -275,7 +328,7 @@ void Pipeline::setClipWindow( float bottom, float top, float left, float right )
 // @param width - width of view window (in world coords)
 // @param height - width of view window (in world coords)
 ///
-void Pipeline::setViewport( int x, int y, int width, int height )
+void Pipeline::setViewport(int x, int y, int width, int height)
 {
     // Here, we considering transforming
     // directly from the clipwindow
@@ -288,19 +341,19 @@ void Pipeline::setViewport( int x, int y, int width, int height )
     //                          0 sy  ty
     //                          0  0  1}
 
-    
+
     //set the value of sx = (xmax - xmin) / (right - left)
     float sx = (x + width - x) / (oldRight - oldLeft);
-    
+
     //set the value of sy = (ymax - ymin) / (top - bottom)
     float sy = (y + height - y) / (oldTop - oldBottom);
-    
+
     //set the value of tx = (right * xmin - left * xmax) / (right - left)
     float tx = (oldRight * x - oldLeft * (width + x)) / (oldRight - oldLeft);
-    
+
     //set the value of ty = (top * ymin - bottom * ymax) / (top - bottom)
     float ty = (oldTop * y - oldBottom * (y + height)) / (oldTop - oldBottom);
-    
+
     for (int i = 0; i < currentID; i++) {
         for (int j = 0; j < clippedNoOfVertices[i]; j++) {
             // set new vertices for the clipped polygon
@@ -310,7 +363,7 @@ void Pipeline::setViewport( int x, int y, int width, int height )
             transformedPolygons[i][j].y = 0 * clippedPolygons[i][j].x + sy * clippedPolygons[i][j].y + ty * 1;
         }
     }
-    std::cout << "\tSetting the viewport done..!!"<< std::endl;
+    std::cout << "\tSetting the viewport done..!!" << std::endl;
 }
 
 
@@ -322,7 +375,7 @@ void Pipeline::setViewport( int x, int y, int width, int height )
       @param  activeEdgeTable    The active edge table to be initialized
     */
 void Pipeline::initializeTables(int* edgeTable, int* activeEdgeTable) {
-   
+
     for (int i = 0; i < 1000; i++) {
         edgeTable[i] = 1000;
         activeEdgeTable[i] = 0;
@@ -340,7 +393,7 @@ void Pipeline::initializeTables(int* edgeTable, int* activeEdgeTable) {
 */
 void Pipeline::formTables(int n, const int x[], const int y[], int* edgeTable, int* activeEdgeTable) {
     for (int i = 1; i < n; i++) {
-        std::cout << "\t\t\t\t\t"<< x[i - 1]<<", "<< y[i - 1]<<" -> "<< x[i]<<", " << y[i] <<std::endl;
+        std::cout << "\t\t\t\t\t" << x[i - 1] << ", " << y[i - 1] << " -> " << x[i] << ", " << y[i] << std::endl;
         fillTable(x[i - 1], y[i - 1], x[i], y[i], edgeTable, activeEdgeTable);
     }
     fillTable(x[0], y[0], x[n - 1], y[n - 1], edgeTable, activeEdgeTable);
@@ -422,7 +475,7 @@ void Pipeline::drawFigure(int* edgeTable, int* activeEdgeTable) {
 // @return true if vertex is inside the polygon
 //
 ///
-bool Pipeline::  inside(Vertex v, Vertex v1, Vertex v2, int side)
+bool Pipeline::inside(Vertex v, Vertex v1, Vertex v2, int side)
 {
     if (side == 1 && v1.y < v.y)
     {
@@ -467,7 +520,7 @@ bool Pipeline::  inside(Vertex v, Vertex v1, Vertex v2, int side)
 //                      vertices clipped w.r.t. current edge
 //
 ///
-int Pipeline::  sutherlandHodgmanAlgo(int in, const Vertex* inVertices, Vertex* outVertices, Vertex v1, Vertex v2, int side)
+int Pipeline::sutherlandHodgmanAlgo(int in, const Vertex* inVertices, Vertex* outVertices, Vertex v1, Vertex v2, int side)
 {
     int outGoingCount = 0;
 
@@ -540,7 +593,7 @@ int Pipeline::  sutherlandHodgmanAlgo(int in, const Vertex* inVertices, Vertex* 
 //
 ///
 
-int Pipeline:: clipPolygon(int in, const Vertex inV[], Vertex outV[], Vertex ll, Vertex ur)
+int Pipeline::clipPolygon(int in, const Vertex inV[], Vertex outV[], Vertex ll, Vertex ur)
 {
     Vertex outV_left[50];
     Vertex outV_right[50];
