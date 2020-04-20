@@ -38,7 +38,26 @@
 ///
 void setUpFrustum( GLuint program )
 {
-    // Add your code here.
+	glUniform1f(glGetUniformLocation(program, "prjTyp"), 1.0);
+	
+	//set Far value
+	glUniform1f(glGetUniformLocation(program, "f"), 4.5);
+	
+	//set Near value	
+	glUniform1f(glGetUniformLocation(program, "n"), 0.9);
+	
+	//set Left value
+	glUniform1f(glGetUniformLocation(program, "l"), -1.0);
+
+	//set Right value
+	glUniform1f(glGetUniformLocation(program, "r"), 1.0);
+
+	//set Bottom value
+	glUniform1f(glGetUniformLocation(program, "b"), -1.0);
+	
+	//set Top value	
+	glUniform1f(glGetUniformLocation(program, "t"), 1.0);
+
 }
 
 
@@ -55,7 +74,25 @@ void setUpFrustum( GLuint program )
 ///
 void setUpOrtho( GLuint program )
 {
-    // Add your code here.
+	glUniform1f(glGetUniformLocation(program, "prjTyp"), 2.0);
+	
+	//set Far value
+	glUniform1f(glGetUniformLocation(program, "f"), 4.5);
+
+	//set Near value	
+	glUniform1f(glGetUniformLocation(program, "n"), 0.9);
+
+	//set Left value
+	glUniform1f(glGetUniformLocation(program, "l"), -1.0);
+
+	//set Right value
+	glUniform1f(glGetUniformLocation(program, "r"), 1.0);
+
+	//set Bottom value
+	glUniform1f(glGetUniformLocation(program, "b"), -1.0);
+
+	//set Top value	
+	glUniform1f(glGetUniformLocation(program, "t"), 1.0);
 }
 
 
@@ -72,7 +109,12 @@ void setUpOrtho( GLuint program )
 ///
 void clearTransforms( GLuint program )
 {
-    // Add your code here.
+	// reset scaling factors to 1(no scaling)
+	glUniform3f(glGetUniformLocation(program, "scale"), 1.0, 1.0, 1.0);
+	// reset rotation factors to 0(no rotation)
+	glUniform3f(glGetUniformLocation(program, "rotate"), 0.0, 0.0, 0.0);
+	// reset translation factors to 0(no translation)
+	glUniform3f(glGetUniformLocation(program, "translate"), 0.0, 0.0, 0.0);
 }
 
 
@@ -101,7 +143,16 @@ void setUpTransforms( GLuint program,
     GLfloat rotateX, GLfloat rotateY, GLfloat rotateZ,
     GLfloat translateX, GLfloat translateY, GLfloat translateZ )
 {
-    // Add your code here.
+
+	// set scaling factors to given values
+	glUniform3f(glGetUniformLocation(program, "scale"), scaleX, scaleY, scaleZ);
+
+	// set rotation factors to given values
+	glUniform3f(glGetUniformLocation(program, "rotate"), rotateX, rotateY, rotateZ);
+
+	// set translation factors to given values
+	glUniform3f(glGetUniformLocation(program, "translate"), translateX, translateY, translateZ);
+
 }
 
 
@@ -118,7 +169,14 @@ void setUpTransforms( GLuint program,
 ///
 void clearCamera( GLuint program )
 {
-    // Add your code here.
+	// set eye location to (0.0,0.0,0.0)
+	glUniform3f(glGetUniformLocation(program, "eye"), 0.0, 0.0, 0.0);
+	
+	// set upper parameter to (0.0,1.0,0.0)
+	glUniform3f(glGetUniformLocation(program, "upparameter"), 0.0, 1.0, 0.0);
+	
+	// set look parameter to (0,0,0.0,-1.0)
+	glUniform3f(glGetUniformLocation(program, "look"), 0.0, 0.0, -1.0);
 }
 
 ///
@@ -145,5 +203,13 @@ void setUpCamera( GLuint program,
     GLfloat lookatX, GLfloat lookatY, GLfloat lookatZ,
     GLfloat upX, GLfloat upY, GLfloat upZ )
 {
-    // Add your code here.
+	// set eye location to (eyeX,eyeY,eyeZ)
+	glUniform3f(glGetUniformLocation(program, "eye"), eyeX, eyeY, eyeZ);
+
+	// set look parameter to (lookatX,lookatY,lookatZ)
+	glUniform3f(glGetUniformLocation(program, "look"), lookatX, lookatY, lookatZ);
+
+	// set upper parameter to (upX,upY,upZ)
+	glUniform3f(glGetUniformLocation(program, "upparameter"), upX, upY, upZ);
+
 }
