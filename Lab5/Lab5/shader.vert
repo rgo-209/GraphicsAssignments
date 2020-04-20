@@ -26,13 +26,12 @@ void main()
     // By default, no transformations are performed.
     gl_Position =  vPosition;
 
-    // Considering the projection type calculating the projection matrix. 
+    // For storing the projection matrix. 
 	mat4 projectionMatrix;
 
-	// Frustum projection
 	if(prjTyp ==1.0)
 	{
-		//Frustum projection
+		// Frustum projection
 		// | 2*n/r-l,		0,		r+l/r-l,			0	  |
 		// |	0,		2*n/t-b,	t+b/t-b,			0	  |
 		// |	0,			0,	  -(f+n)/f-n,	(-2*f*n)/f-n  |
@@ -56,13 +55,13 @@ void main()
 							-(r+l)/(r-l), -(t+b)/(t-b),  -(f+n)/(f-n),	   1);
 	}
 	
-	// Getting u,v and n vector
+	// Getting u,v and n vector by normalization
 	vec3 n = normalize(eye - look);
 	vec3 u = normalize(cross(upparameter, n));
 	vec3 v = cross(n, u);
 
 	mat4 viewingMatrix ;
-	//camera transformation
+	// Camera Transformation
 	// |	ux,		uy,		uz,		-1*(u*eyepoint) |	
 	// |	vx,		vy,		vz,		-1*(v*eyepoint) |	
 	// |	nx,		ny,		nz,		-1*(n*eyepoint) |	
@@ -74,42 +73,70 @@ void main()
 						-1.0 * dot(u, eye), -1.0 * dot(v, eye), -1.0 * dot(n, eye), 1.0);
 	
 	mat4 translationMatrix;
+	// Translation Matrix
+	// |	1.0,	0.0,	0.0,	0.0	|	
+	// |	0.0,	1.0,	0.0,	0.0	|	
+	// |	0.0,	0.0,	1.0,	0.0	|	
+	// |	t.x,	t.x,	t.z,	1.0	|
 	translationMatrix = mat4(	1.0,			0.0,			0.0,		0.0,
 								0.0,			1.0,			0.0,		0.0,
 								0.0,			0.0,			1.0,		0.0,
-							translate.x,	translate.y,	translate.z,	1.0);
+							translate.x,	translate.x,	translate.z,	1.0);
 
 	mat4 scaleMatrix;
-	scaleMatrix = mat4(scale.x,		0.0,		0.0,		0.0,
-						0.0,	  scale.y,		0.0,		0.0,
-						0.0,		0.0,	   scale.z,		0.0,
-						0.0,		0.0,		0.0,		1.0);
+	// Scaling Matrix
+	// |	s.x,	0.0,	0.0,	0.0	|	
+	// |	0.0,	s.y,	0.0,	0.0	|	
+	// |	0.0,	0.0,	s.z,	0.0	|	
+	// |	0.0,	0.0,	0.0,	1.0	|
+	scaleMatrix = mat4(			scale.x,	  0.0,		0.0,		0.0,
+								  0.0,		scale.y,	0.0,		0.0,
+								  0.0,		  0.0,	   scale.z,		0.0,
+								  0.0,		  0.0,		0.0,		1.0);
 
 	mat4 rotationMatrix;
 
 	vec3 angle = radians(rotate), cosV = cos(angle),sinV = sin(angle);
 
+	// X Rotation matrix
+	// |	1.0,	0.0,	 0.0,	0.0 |	
+	// |	0.0,   cosV.x,	sinV.x,	0.0 |	
+	// |	0.0,  -sinV.x,  cosV.x,	0.0 |	
+	// |	0.0,	0.0,	 0.0,	1.0 |	
 	mat4 xRotationMatrix = mat4(  1.0,		0.0,		 0.0,		0.0,
 								  0.0,	   cosV.x,		sinV.x,		0.0,
 								  0.0,	  -sinV.x,		cosV.x,		0.0,
 								  0.0,		0.0,		 0.0,		1.0);
 
+	// Y Rotation matrix
+	// |	cosV.y,	 0.0,   -sinV.y,	0.0 |	
+	// |	  0.0,   1.0,		0.0,	0.0 |	
+	// |	sinV.y,	 0.0,	 cosV.y,	0.0 |	
+	// |	  0.0,	 0.0,		0.0,	1.0 |	
 	mat4 yRotationMatrix = mat4( cosV.y,	0.0,		-sinV.y,	0.0,
 								  0.0,		1.0,		  0.0,		0.0,
 								 sinV.y,	0.0,		cosV.y,		0.0,
 								  0.0,		0.0,		  0.0,		1.0);
 
+	// Z Rotation matrix
+	// |	cosV.z,		sinV.z,  0.0,	0.0 |	
+	// |   -sinV.z,		cosV.z,	 0.0,	0.0 |	
+	// |	  0.0,		0.0,	 1.0,	0.0 |	
+	// |	  0.0,		0.0,	0.0,	1.0 |	
 	mat4 zRotationMatrix = mat4( cosV.z,   sinV.z,		  0.0,		0.0,
 								 -sinV.z,  cosV.z,		  0.0,		0.0,
 								  0.0,		0.0,		  1.0,		0.0,
 								  0.0,		0.0,		  0.0,		1.0);
 
+	// Rotation matrix  = Z Rotation Matrix * Y Rotation Matrix * X Rotation Matrix
 	rotationMatrix = zRotationMatrix * yRotationMatrix * xRotationMatrix;
 
 	// final object postion = projection Matrix * viewingMatrix 
 	//						* translationMatrix * rotationMatrix * scaleMatrix 
-	//							* vPosition;
+	//						* vPosition;
 	
-	gl_Position = projectionMatrix * viewingMatrix * translationMatrix * rotationMatrix * scaleMatrix * vPosition;
+	gl_Position = projectionMatrix * viewingMatrix * 
+				translationMatrix * rotationMatrix * scaleMatrix *
+				vPosition;
 	
 }
