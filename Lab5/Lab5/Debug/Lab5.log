@@ -1,0 +1,4 @@
+﻿  Viewing.cpp
+C:\Users\hp\Desktop\OpenGLProjects\Lab5\Lab5\Viewing.cpp(50,53): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\Users\hp\Desktop\OpenGLProjects\Lab5\Lab5\Viewing.cpp(81,53): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+  Lab5.vcxproj -> C:\Users\hp\Desktop\OpenGLProjects\Lab5\Debug\Lab5.exe
