@@ -1,0 +1,246 @@
+commit 2107220e3d1311e6915dcfa325dcc2d98b51a316
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Mon Apr 20 19:45:53 2020 -0400
+
+    Final submission
+
+commit e06b50eebff27bd3facced664631f580133b8c91
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Mon Apr 20 19:45:37 2020 -0400
+
+    Final submission
+
+commit d436c58347af8ff3dfe457792fbb2d20765241ab
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Mon Apr 20 19:34:31 2020 -0400
+
+    final submission done
+
+commit 640851138d97892655a07aaae409dd26a8850727
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Mon Apr 20 19:10:36 2020 -0400
+
+    projections done
+
+commit 2961c069532bdc248347ece84031ec1bb351ad4c
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Mon Apr 20 17:46:01 2020 -0400
+
+    parameters setup done
+
+commit ebd33d84f546a29e6335b5a699d98547f294993d
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Mon Apr 20 03:42:14 2020 -0400
+
+    Initial commit Lab 5
+
+commit 028eeab7cc30f707e8354e94aba930a758c9d65a
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Fri Apr 17 05:33:23 2020 -0400
+
+    resetup
+
+commit 347254c4369e5c855e2803acc530d318a675dc78
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Fri Apr 17 05:32:52 2020 -0400
+
+    Re - setup
+
+commit 9ff48c7e4b8005f0e2f24e8a2e5c8b4ba8470c90
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Fri Apr 17 05:31:04 2020 -0400
+
+    Re - setup
+
+commit b5cfc156186f450f07f6503570f660c4a3daa6eb
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Fri Apr 17 05:29:10 2020 -0400
+
+    Final submission
+
+commit f36b7dd2d128432be655abadbbe77b5ed278d6c0
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Fri Apr 17 05:19:34 2020 -0400
+
+    Final full working code
+
+commit 500c6df7b71224e0c178df64981847aae00d7c37
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Fri Apr 17 01:43:51 2020 -0400
+
+    new mode but same output
+
+commit 5731bf66522b940a63d0c4748b355610027a7b13
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Wed Apr 15 17:07:06 2020 -0400
+
+    1 and 2 running but 3 error 4 error
+
+commit 8f06eaf5733a7059a9a7bd67ccbf2ad94218b29c
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Wed Apr 15 15:52:41 2020 -0400
+
+    Done till 3 and halfway to 4
+
+commit 89e76d25414faf1febc775757c0a825ac1eefb65
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Wed Apr 15 15:39:55 2020 -0400
+
+    1-2-3 Working 4 Half working
+
+commit b75cc6a9b8bc14ceed2f4e39f3fbb6e3571fde23
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Tue Apr 14 21:02:02 2020 -0400
+
+    Half working code
+
+commit 43632f7290ff74412e137fbf13acac30c01bca9b
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Sun Apr 12 17:59:06 2020 -0400
+
+    pipeline updated
+
+commit 2e635c3079966685b44af2fc83fa9242ce6cdf95
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Sun Apr 12 17:56:26 2020 -0400
+
+    Delete Pipeline.h
+
+commit 97b5853e568506ebc7968db6b361f1b2c5ee8c85
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Sun Apr 12 17:56:12 2020 -0400
+
+    Delete Pipeline.cpp
+
+commit 52a89e17d47b35c842c87d484b7698261d5d4ad9
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Sun Apr 12 17:54:00 2020 -0400
+
+    Clipping added successfully..git add .
+
+commit 1c161f5ca9f4c13ce54abbd4da8545f35bc740f7
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Sun Apr 12 17:50:04 2020 -0400
+
+    Clipping added successfully..git add .
+
+commit 417ba6c98e96166d636e0156087eb0c9df99d7ae
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Sun Apr 12 17:19:05 2020 -0400
+
+    Added polygon successfully + Identity Matrix done
+
+commit 37c5d81cb017e700a175c39faab161ee9cf22114
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Sat Apr 11 15:54:32 2020 -0400
+
+    Midterm Initial commit
+
+commit bfc18b7d0ce2cceed8af2163797afa046d268282
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Tue Apr 7 20:12:09 2020 -0400
+
+    Random commit
+
+commit 62a6dd83531a11c72daac943375fd7586efc5859
+Merge: cf000f1 6ae1115
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Tue Apr 7 20:11:11 2020 -0400
+
+    Merge branch 'master' of https://github.com/rgo-209/GraphicsAssignments
+
+commit cf000f117374f11ac41a3e487a53d46442f8866e
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Mon Apr 6 23:54:17 2020 -0400
+
+    Submitted file
+
+commit 6ae1115798ce2b18298c34fe71513b2ccdec50bd
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Mon Apr 6 17:44:15 2020 -0400
+
+    Delete s
+
+commit 587f01f75fb8725bf1c588ba1623e50f49898289
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Mon Apr 6 17:36:13 2020 -0400
+
+    Final submitted files
+
+commit 00875e06a1ab4b7bfd1ecda9308e15adf89ea66d
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Mon Apr 6 17:29:05 2020 -0400
+
+    Final code with cone fixed
+
+commit a24db870d150c7888d91ed31f153fb3ec19e1e45
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Wed Apr 1 04:20:17 2020 -0400
+
+    Sphere final working code
+
+commit 78df0408ad5e1d193c8d72f923d7dfadf54736c0
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Mon Mar 30 23:54:09 2020 -0400
+
+    Cone not perfectly working
+
+commit 14ab8926f2da7af2a1fef822e7b3a0a2cd79bac2
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Sun Mar 29 19:51:16 2020 -0400
+
+    Cylinder code working final commented
+
+commit c9258497fe5612189c2aa3891f000b74bda0fa2a
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Sun Mar 29 04:45:36 2020 -0400
+
+    Cube code working final commented
+
+commit 8950f148a248681e2e732b4b5380fca1cbd6bf08
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Sun Mar 29 03:44:00 2020 -0400
+
+    Cube code working
+
+commit bd8e317a8ed0ab26747a823d78afdebe4e14988c
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Fri Mar 27 22:47:41 2020 -0400
+
+    Final running code
+
+commit d43633c7095245759c8a73173ef197b57f10e3f2
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Fri Mar 27 22:22:00 2020 -0400
+
+    Final code not fully working
+
+commit 79636eb9bdaff597be7169720ad92980368a08df
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Fri Mar 27 03:31:34 2020 -0400
+
+    Almost working code
+
+commit 0acec1f571bed1423560ea90042479f4b3b3ffc1
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Thu Mar 26 17:50:40 2020 -0400
+
+    Working exactly opposite :)
+
+commit ba2811c02e0dd53ac3ca97506a69fc3bcdce2eef
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Mon Mar 23 17:42:37 2020 -0400
+
+    Not working - Read Access Error
+
+commit 189bab1801f0f6981573a30c47b2023868153484
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Mon Mar 23 03:20:38 2020 -0400
+
+    First Method for Lab3
+
+commit 67c948f14dc1d4cbf97967d844fc050760185566
+Author: rgo-209 <golhar.rahul@gmail.com>
+Date:   Sun Mar 15 18:43:22 2020 -0400
+
+    first commit VS
