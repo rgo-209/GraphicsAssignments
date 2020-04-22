@@ -2,7 +2,7 @@
 
 // Texture mapping vertex shader
 //
-// Contributor:  YOUR_NAME_HERE
+// Contributor:  Rahul Golhar
 
 // INCOMING DATA
 

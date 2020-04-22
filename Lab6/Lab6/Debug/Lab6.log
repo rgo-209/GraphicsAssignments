@@ -1,4 +1,5 @@
-﻿  Textures.cpp
-  Viewing.cpp
+﻿  Lighting.cpp
+C:\Users\hp\Desktop\OpenGLProjects\Lab6\Lab6\Lighting.cpp(54,80): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+  Textures.cpp
   Generating Code...
   Lab6.vcxproj -> C:\Users\hp\Desktop\OpenGLProjects\Lab6\Debug\Lab6.exe

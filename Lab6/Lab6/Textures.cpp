@@ -5,7 +5,7 @@
 //  Based on code created by Joe Geigel on 1/23/13.
 //  Copyright 2016 Rochester Institute of Technology.  All rights reserved.
 //
-//  Contributor:  YOUR_NAME_HERE
+//  Contributor:  Rahul Golhar
 //
 //  Simple class for setting up texture mapping parameters.
 //
