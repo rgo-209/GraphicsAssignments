@@ -9,57 +9,49 @@
 // Here is where you should add the variables you need in order
 // to propogate data from the vertex shader to the fragment shader
 // so that it can do the shading computations
+uniform vec4 lightSourcePosition;
+uniform vec4 lightSourceColor;
+uniform vec4 ambientLightColor;
+
 uniform vec4 ambientMaterialColor;
 uniform vec4 diffuseMaterialColor;
 uniform vec4 specularMaterialColor;
-uniform vec4 ambientLightColor;
-uniform vec4 lightSourceColor;
 
 uniform float ambientReflectionCoefficient;
 uniform float diffuseReflectionCoefficient;
 uniform float specularReflectionCoefficient;
 uniform float specularExponent;
-vec4 ambientReflectionParameter, diffuseReflectionParameter, specularReflectionParameter;
 
-uniform vec3 lightSourceVector;
-uniform vec3 normalVector;
-uniform vec3 viewingDirVector;
 
-vec3 lightSourceDir;
-vec3 normalDir;
-vec3 viewingDir;
+in vec3 lightSourceDir;
+in vec3 normalDir;
+in vec3 viewingDir;
 
 // OUTGOING DATA
-out vec4 finalColor;
+out vec4 finalFragmentColor;
 
 void main()
 {
-    vec4 ambientReflectionParameter;
-	vec4 diffuseReflectionParameter;
-	vec4 specularReflectionParameter;
+	vec3 normalVector = normalize(normalDir);
+	vec3 lightSourceVector = normalize(lightSourceDir - normalDir);
+	vec3 finalNormalizedReflection = normalize(reflect(lightSourceVector, normalVector));
 
-	vec3 finalNormalizedReflection;
-	lightSourceDir = normalize(lightSourceVector - viewingDirVector);
-	normalDir = normalize(normalVector);
-	viewingDir = normalize(viewingDirVector);
-	finalNormalizedReflection = normalize(reflect(lightSourceDir, normalDir));
+	vec4 ambientReflectionParameter, diffuseReflectionParameter, specularReflectionParameter;
 
-	ambientReflectionParameter  = ambientLightColor				* 
-								  ambientMaterialColor			*
-								  ambientReflectionCoefficient;
+	ambientReflectionParameter  = ambientMaterialColor			*
+								  ambientReflectionCoefficient	*
+								  ambientLightColor				;
 
 	diffuseReflectionParameter  = diffuseMaterialColor			*
-								  lightSourceColor				*
 								  diffuseReflectionCoefficient  *
-								  dot(normalize(lightSourceVector - viewingDirVector),normalDir);
-	
-	specularReflectionParameter = specularMaterialColor			* 
-								  lightSourceColor				*
-								  specularReflectionCoefficient *
-								  pow(clamp(dot(finalNormalizedReflection,viewingDir), 0, 1), specularExponent);
-	
-   	finalColor = ambientReflectionParameter + 
-				 diffuseReflectionParameter +
-				 specularReflectionParameter;
+								  dot(normalVector, lightSourceVector);
 
+
+	specularReflectionParameter = specularMaterialColor			* 
+								  specularReflectionCoefficient *
+								  pow(max(0.0, dot(normalize (viewingDir),finalNormalizedReflection)),specularExponent);
+
+   	finalFragmentColor = ambientReflectionParameter + 
+						 diffuseReflectionParameter * lightSourceColor +
+						 specularReflectionParameter;
 }

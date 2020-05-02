@@ -74,4 +74,12 @@
     <None Include="texture.vert" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="smiley2.png">
+      <Filter>Source Files</Filter>
+    </Image>
+    <Image Include="frowny2.png">
+      <Filter>Source Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>
