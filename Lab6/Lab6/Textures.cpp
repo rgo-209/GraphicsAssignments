@@ -29,8 +29,8 @@ using namespace std;
 #endif
 
 // Add any global definitions and/or variables you need here.
-GLuint smileyID;// , frownyID;
-
+GLuint smileyID , frownyID;
+GLint smileyImageTexture, frownyImageTexture;
 
 
 ///
@@ -50,17 +50,17 @@ void loadTexture(void)
 		SOIL_FLAG_TEXTURE_REPEATS
 	);
 	//Loading the second texture	
-	//frownyID = SOIL_load_OGL_texture(
-	  //  "frowny2.png",
-		//SOIL_LOAD_AUTO,
-		//SOIL_CREATE_NEW_ID,
-		//SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y |
-		//SOIL_FLAG_TEXTURE_REPEATS
-	//);
-	if (smileyID != 0){
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, smileyID);
-	}
+	frownyID = SOIL_load_OGL_texture(
+	    "frowny2.png",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y |
+		SOIL_FLAG_TEXTURE_REPEATS
+	);
+//	if (smileyID != 0){
+//		glActiveTexture(GL_TEXTURE0+0);
+//		glBindTexture(GL_TEXTURE_2D, smileyID);
+//	}
 }
 
 ///
@@ -110,5 +110,24 @@ void setUpTexture(GLuint program)
 	*/
 	float ambientLightColor[] = { 0.5, 0.5, 0.5, 1.0 };
 	glUniform4fv(glGetUniformLocation(program, "ambientLightColor"), 1, ambientLightColor);
+
+	//Activating the shader program
+	glUseProgram(program);
+	
+	glActiveTexture(GL_TEXTURE0 + 0);
+	glBindTexture(GL_TEXTURE_2D, smileyID);
+
+	glActiveTexture(GL_TEXTURE0 + 2);
+	glBindTexture(GL_TEXTURE_2D, frownyID);
+	
+	//Getting sampler variables location
+	smileyImageTexture = glGetUniformLocation(program, "smileySampler");
+	frownyImageTexture = glGetUniformLocation(program, "frownySampler");
+	
+	// smiley Image Texture unit 0
+	glUniform1i(smileyImageTexture, 0);
+
+	// frowny Image Texutre unit 2
+	glUniform1i(frownyImageTexture, 2);
 
 }

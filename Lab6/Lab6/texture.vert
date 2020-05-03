@@ -117,11 +117,16 @@ void main()
     // inverse transpose of the upper-left 3x3 submatrix of the modelView
     // matrix.
     
+    //Add the vertex coordinates
     finalVertexCoordinates = vTexCoord;
-
+    
+    // Get viewing direction vector
     viewingDir = modelViewMat * vPosition;
+    // Get light source direction vector
 	lightSourceDir = viewMat * lightSourcePosition;
+    // Get normal direction vector
 	normalDir = vNormal;
+    // Get viewing transform matrix
 	viewingMatrix = modelViewMat;
 
     // Transform the vertex location into clip space

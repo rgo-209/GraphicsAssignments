@@ -34,28 +34,36 @@ out vec4 finalColor;
 
 void main()
 {
-	mat4 normalViewingMatrix = transpose(inverse (viewingMatrix));
-	vec4 normalToCameraDir =viewingMatrix * vec4(normalDir, 0.0);	
+	vec4 normalToCameraDir = viewingMatrix * vec4(normalDir, 0.0);	
+	// N
 	vec4 normalVector = normalize(normalToCameraDir);
+	// L
 	vec4 lightSourceVector = normalize(lightSourceDir-viewingDir);
+	// R
 	vec4 normalizedReflectionVector = normalize (reflect(-lightSourceVector, normalVector));
-    vec4 viewingVector = normalize (-viewingDir);
+    // V
+	vec4 viewingVector = normalize (-viewingDir);
 
-
+	//Ambient Reflection = ambient Material Color * ambient Light Color * ambient Reflection Coefficient
 	vec4 tempAmbientParameter  = ambientMaterialColor			*
 								 ambientLightColor				*
 								 ambientReflectionCoefficient;
 	
+	//Diffuse Reflection  = diffuse Material Color			* light Source Color * 
+	//						diffuse Reflection Coefficient	* (N.L)
 	vec4 tempDiffuseParameter  = diffuseMaterialColor			*
 								 lightSourceColor				*
 								 diffuseReflectionCoefficient	*
 								 dot(normalVector, lightSourceVector);
 
-	vec4 tempSpecularParameter = ambientMaterialColor			*
+	//vec4 tempSpecularParameter = specular Material Color			* light Source Color	*
+	//							   specularReflectionCoefficient	* max(0.0, V.R)^specularExponent;
+	vec4 tempSpecularParameter = specularMaterialColor			*
 								 lightSourceColor				*
 								 specularReflectionCoefficient	*
 		pow(max(0.0, dot(viewingVector,normalizedReflectionVector)),specularExponent);
-
+	
+	// Final color = ambient color + diffuse color + specular color
    	finalColor = tempAmbientParameter + 
 				 tempDiffuseParameter +
 				 tempSpecularParameter;

@@ -18,6 +18,7 @@ in vec2 finalVertexCoordinates;
 
 //uniform sampler2D texture2;
 uniform sampler2D smileySampler;
+uniform sampler2D frownySampler;
 
 //uniform vec4 lightSourcePosition;
 uniform vec4 lightSourceColor;
@@ -33,32 +34,55 @@ uniform float specularExponent;
 out vec4 finalFragColor;
 
 void main()
-{
-
-	vec4 basicSmileyColor =  texture( smileySampler, finalVertexCoordinates );
-
-    mat4 normalmatrix = transpose(inverse (viewingMatrix));
+{	
+	// Getting smiley texture
+	vec4 smileyFaceColor	= texture2D(smileySampler, finalVertexCoordinates);
+	
+	// Getting frowny texture
+	vec4 frownyFaceColor 	= texture2D(frownySampler, finalVertexCoordinates);
 
     vec4 normalToCameraDir = viewingMatrix * vec4(normalDir, 0.0);
-    vec4 normalVector = normalize(normalToCameraDir);
+    
+	// N
+	vec4 normalVector = normalize(normalToCameraDir);
+	// L
 	vec4 lightSourceVector = normalize(lightSourceDir-viewingDir);
+	// R
 	vec4 normalizedReflectionVector = normalize (reflect(-lightSourceVector, normalVector));
-    vec4 viewingVector = normalize (-viewingDir);
+    // V
+	vec4 viewingVector = normalize (-viewingDir);
 
-	vec4 tempAmbientParameter  = basicSmileyColor				*
-								 ambientLightColor				*
+
+	//Ambient Reflection = Material Color(later) * ambient Light Color * ambient Reflection Coefficient
+	vec4 tempAmbientParameter  = ambientLightColor				*
 								 ambientReflectionCoefficient;
 	
-	vec4 tempDiffuseParameter  = basicSmileyColor				*
-								 lightSourceColor				*
+	//Diffuse Reflection  = Material Color(later)			* light Source Color * 
+	//						diffuse Reflection Coefficient	* (N.L)
+	vec4 tempDiffuseParameter  = lightSourceColor				*
 								 diffuseReflectionCoefficient	*
 								 dot(normalVector, lightSourceVector);
 
-	vec4 tempSpecularParameter = basicSmileyColor				*
-								 lightSourceColor				*
+	//vec4 tempSpecularParameter = Material Color(later)			* light Source Color			*
+	//							   specularReflectionCoefficient	* max(0.0, V.R)^specularExponent;
+	vec4 tempSpecularParameter = lightSourceColor				*
 								 specularReflectionCoefficient	*
 		pow(max(0.0, dot(viewingVector,normalizedReflectionVector)),specularExponent);
 
+	if(gl_FrontFacing){
+		// For front side show smiley
+		tempAmbientParameter	= tempAmbientParameter	* smileyFaceColor;
+		tempDiffuseParameter	= tempDiffuseParameter	* smileyFaceColor;
+		tempSpecularParameter	= tempSpecularParameter * smileyFaceColor;
+	}
+	else{
+		// For back side show forwny
+		tempAmbientParameter	= tempAmbientParameter	* frownyFaceColor;
+		tempDiffuseParameter	= tempDiffuseParameter	* frownyFaceColor;
+		tempSpecularParameter	= tempSpecularParameter * frownyFaceColor;
+	}
+
+	// Final color = ambient color + diffuse color + specular color
 	finalFragColor = tempAmbientParameter	+
 					 tempDiffuseParameter	+
 					 tempSpecularParameter;
