@@ -37,10 +37,10 @@ uniform float far;
 uniform vec4 lightSourcePosition;
 
 // OUTGOING DATA
-
-out vec3 lightSourceDir;
 out vec3 normalDir;
-out vec3 viewingDir;
+out vec4 lightSourceDir; 
+out vec4 viewingDir;     
+out mat4 viewingMatrix;
 
 // add all necessary variables for communicating with
 // the fragment shader here
@@ -159,9 +159,11 @@ void main()
     // for a discussion.  normal transformation should be done using the
     // inverse transpose of the upper-left 3x3 submatrix of the modelView
     // matrix.
-    	lightSourceDir = (viewMat * lightSourcePosition).xyz;
-    	normalDir = (modelViewMat * vPosition).xyz;
-    	viewingDir = normalize(modelViewMat * vec4(vNormal, 0.0)).xyz;
+
+    viewingDir = modelViewMat * vPosition;
+	lightSourceDir = viewMat * lightSourcePosition;
+	normalDir = vNormal;
+	viewingMatrix = modelViewMat;
 
     // Transform the vertex location into clip space
     gl_Position =  projMat * viewMat  * modelMat * vPosition;

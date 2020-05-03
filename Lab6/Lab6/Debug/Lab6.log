@@ -1,2 +1,13 @@
-﻿  Textures.cpp
+﻿  Lighting.cpp
+C:\Users\hp\Desktop\OpenGLProjects\Lab6\Lab6\Lighting.cpp(52,54): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\hp\Desktop\OpenGLProjects\Lab6\Lab6\Lighting.cpp(55,55): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\hp\Desktop\OpenGLProjects\Lab6\Lab6\Lighting.cpp(71,42): warning C4305: 'initializing': truncation from 'double' to 'float'
+  Textures.cpp
+C:\Users\hp\Desktop\OpenGLProjects\Lab6\Lab6\Textures.cpp(98,42): warning C4305: 'initializing': truncation from 'double' to 'float'
+  Generating Code...
+  LINK : C:\Users\hp\Desktop\OpenGLProjects\Lab6\Debug\Lab6.exe not found or not built by the last incremental link; performing full link
+soil.lib(image_DXT.obj) : warning LNK4099: PDB 'SOIL.pdb' was not found with 'soil.lib(image_DXT.obj)' or at 'C:\Users\hp\Desktop\OpenGLProjects\Lab6\Debug\SOIL.pdb'; linking object as if no debug info
+soil.lib(image_helper.obj) : warning LNK4099: PDB 'SOIL.pdb' was not found with 'soil.lib(image_helper.obj)' or at 'C:\Users\hp\Desktop\OpenGLProjects\Lab6\Debug\SOIL.pdb'; linking object as if no debug info
+soil.lib(SOIL.obj) : warning LNK4099: PDB 'SOIL.pdb' was not found with 'soil.lib(SOIL.obj)' or at 'C:\Users\hp\Desktop\OpenGLProjects\Lab6\Debug\SOIL.pdb'; linking object as if no debug info
+soil.lib(stb_image_aug.obj) : warning LNK4099: PDB 'SOIL.pdb' was not found with 'soil.lib(stb_image_aug.obj)' or at 'C:\Users\hp\Desktop\OpenGLProjects\Lab6\Debug\SOIL.pdb'; linking object as if no debug info
   Lab6.vcxproj -> C:\Users\hp\Desktop\OpenGLProjects\Lab6\Debug\Lab6.exe
